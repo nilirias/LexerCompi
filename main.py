@@ -1,7 +1,7 @@
 from sly import Parser
 from sly.yacc import _decorator as _
 from miku_lexer import MikuLexer
-#from miku_quadruple import Quadruple
+from miku_quadruple import Quadruple
 #from miku_semanticcube import miku_semantic_cube as sm
 
 class MikuParser(Parser):
@@ -9,130 +9,166 @@ class MikuParser(Parser):
   tokens = MikuLexer.tokens
   start = 'program'
 
+  quadruples = []
+  quadcount = 0
+
+  myQuad = Quadruple(0,0,0,0)
+  t1 = 0
+  
+  operandos = []
+  operadores = []
+
+  lo = 0
+  ro = 0
+  op = ''
+  
+  # precedence = (
+  #      ('left', SUM, SUB),
+  #      ('left', MULT, DIV),
+  #   )
+
  # Grammar rules and actions
   @_('DRAWING ID declaration')
   def program(self, p):
-    print(f'program {p[0]}')
+    return 'program'
   
   @_('var_declaration func_declaration main')
   def declaration(self,p):
-    print(f'declaration {p[0]}')
+    return 'declaration'
   
   @_('var_type ID multiple_var \n')
   def var_declaration(self, p):
-    print(f'var_declaration {p[0]}')
+    return 'var_declaration'
   
   @_('COMMA ID multiple_var', 'empty')
   def multiple_var(self, p):
-    print(f'multiple_var {p[0]}')
+    return 'multiple_var'
   
   @_('NUMBER', 'WORD', 'BOOL')
   def var_type(self, p):
-    print(f'var_type {p[0]}')
+    return 'var_type'
   
   @_('func_type FUNC ID OPEN_PTH parameter CLOSE_PTH \n stmnt END \n','empty')
   def func_declaration(self, p):
-    print(f'func_declaration {p[0]}')
+    return 'func_declaration'
   
   @_('VOID', 'NUMBER', 'WORD', 'BOOL')
   def func_type(self, p):
-    print(f'func_type {p[0]}')
+    return 'func_type'
   
   @_('var_type ID multiple_parameters', 'empty')
   def parameter(self, p):
-    print(f'parameter {p[0]}')
+    return 'parameter'
   
   @_('COMMA parameter', 'empty')
   def multiple_parameters(self, p):
-    print(f'multiple_parameters {p[0]}')
+    return 'multiple_parameters'
   
   @_('var_assignation stmnt','func_call stmnt', 'read stmnt', 'write stmnt', 'if_stmnt stmnt', 'while_stmnt stmnt', 'move_func stmnt', 'pen_func stmnt', 'var_declaration_func stmnt', 'empty')
   def stmnt(self, p):
-    print(f'stmnt {p[0]}')
+    return 'stmnt'
 
   @_('var_type ID multiple_vars \n')
   def var_declaration_func(self,p):
-    print(f'stmnt {p[0]}')
+    return 'var_declaration_func'
   
   @_('ID ASSIGN var_cte \n', 'ID ASSIGN expression \n')
   def var_assignation(self, p):
-    print(f'var_assignation {p[0]}')
+    return 'var_assignation'
   
   @_('variable', 'CTE_NUM', 'CTE_STR', 'cte_bool', 'func_call')
   def var_cte(self, p):
-    print(f'var_cte {p[0]}')
+    return p[0]
 
   @_('TRUE', 'FALSE')
   def cte_bool(self, p):
-    print(f'cte_bool {p[0]}')
+    return 'cte_bool'
   
   @_('complex_expr', 'var_cte', 'mult_expr')
   def expression(self, p):
-    print(f'expression {p[0]}')
+    return p[0]
   
   @_('OPEN_PTH expression CLOSE_PTH')
   def mult_expr(self, p):
-    print(f'mult_expr {p[0]}')
+    return 'mult_expr'
   
-  @_('expression operator expression')
+  @_('expression e1 operator expression e2 quads')
   def complex_expr(self, p):
-    print(f'complex_expr {p[0]}')
+    return 'complex_expr'
+
+  @_('')
+  def e1(self, p):
+    self.operandos.append(p[-1])
+    print(self.operandos)
+
+  @_('')
+  def e2(self, p):
+    self.operandos.append(p[-1])
+    print(self.operandos)
+
+  @_('')
+  def quads(self, p):
+    t1 = 0
+    myQuad = Quadruple(self.operandos.pop(), self.operandos.pop(), self.operadores.pop(), t1)
+    print(myQuad)
   
   @_('art_op', 'log_op', 'rel_op')
   def operator(self, p):
-    print(f'operator {p[0]}')
+    return 'operator'
   
   @_('SUM', 'SUB', 'MULT', 'DIV')
   def art_op(self, p):
-    print(f'art_op {p[0]}')
+    self.operadores.append(p[-1])
+    print(self.operadores)
+    return 'art_op'
   
   @_('AND', 'OR')
   def log_op(self, p):
-    print(f'log_op {p[0]}')
+    return 'log_op'
   
   @_('LESS_THAN', 'MORE_THAN', 'DIFFERENT_TO', 'LESS_OR_EQ_THAN', 'MORE_OR_EQ_THAN', 'EQUAL_TO')
   def rel_op(self, p):
-    print(f'rel_op {p[0]}')
+    return 'rel_op'
   
   @_('ID OPEN_PTH func_call_param CLOSE_PTH \n')
   def func_call(self, p):
-    print(f'func_call {p[0]}')
+    return 'func_call'
   
   @_('expression multiple_fc_param')
   def func_call_param(self, p):
-    print(f'func_call_param {p[0]}')
+    return 'func_call_param'
   
   @_('COMMA func_call_param', 'empty')
   def multiple_fc_param(self, p):
-    print(f'multiple_fc_param {p[0]}')
+    return 'multiple_fc_param'
   
   @_('READ OPEN_PTH variable multiple_vars CLOSE_PTH \n')
   def read(self, p):
-    print(f'read {p[0]}')
+    return 'read'
   
   @_('ID array')
   def variable(self, p):
-    print(f'variable {p[0]}')
+    return p[0]
   
   @_('OPEN_SQR expression CLOSE_SQR matrix', 'empty')
   def array(self, p):
-    print(f'array {p[0]}')
+    return 'array'
   
   @_('OPEN_SQR expression CLOSE_SQR', 'empty')
   def matrix(self, p):
-    print(f'matrix {p[0]}')
+    return 'matrix'
   
   @_('COMMA variable', 'empty')
   def multiple_vars(self, p):
-    print(f'multiple_vars {p[0]}')
+    return 'multiple_vars'
   
   @_('WRITE OPEN_PTH expression multiple_expression CLOSE_PTH \n')
   def write(self, p):
-    print(f'write {p[0]}')
+    return 'write'
   
   @_('COMMA expression', 'empty')
   def multiple_expression(self, p):
-    print(f'multiple_expression {p[0]}')
+    return 'multiple_expression'
   
   # @_('\n stmnt multiple_con_stmnt')
   # def multiple_con_stmnt(self, p):
@@ -140,41 +176,39 @@ class MikuParser(Parser):
   
   @_('IF expression \n stmnt else_stmnt')
   def if_stmnt(self, p):
-    print(f'if_stmnt {p[0]}')
+    return 'if_stmnt'
   
   @_('\n ELSE \n stmnt END \n', '\n END \n')
   def else_stmnt(self, p):
-    print(f'else_stmnt {p[0]}')
+    return 'else_stmnt'
   
   @_('WHILE expression \n stmnt \n END \n')
   def while_stmnt(self, p):
-    print(f'while_stmnt {p[0]}')
+    return 'while_stmnt'
   
   @_('move_type OPEN_PTH func_call_param CLOSE_PTH')
   def move_func(self, p):
-    print(f'move_func {p[0]}')
+    return 'move_func'
   
   @_('LEFT', 'RIGHT', 'FORWARD', 'CENTER')
   def move_type(self, p):
-    print(f'move_type {p[0]}')
+    return 'move_type'
   
   @_('PEN_UP OPEN_PTH CLOSE_PTH \n', 'PEN_DOWN OPEN_PTH CLOSE_PTH \n')
   def pen_func(self, p):
-    print(f'pen_func {p[0]}')
+    return 'pen_func'
   
   @_('MAIN \n stmnt END')
   def main(self, p):
-    print(f'main {p[0]}')
+    return 'main'
 
   @_('')
   def empty(self, p):
     pass
 
 # Semantics
-  # @_('CTE_NUM SUM CTE_NUM')
-  # def expr(self, p):
-  #   print(fp[0] + p[ {p[0]}2]
-  
+
+
 if __name__ == '__main__':
   lexer = MikuLexer()
   parser = MikuParser()
