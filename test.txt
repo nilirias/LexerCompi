@@ -1,10 +1,11 @@
-drawing
-Drawing
-drAwinG
-DRAWING
-"DRAWING"
-drawingo
-
-word = ola
-
-2+2
+DRAWING test
+word hola
+MAIN
+  number x
+  number y
+  number resultado
+  x = 7
+  y = 2
+  resultado = x + y
+  write(resultado)
+END
