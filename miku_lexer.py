@@ -33,6 +33,7 @@ class MikuLexer(Lexer):
   CLOSE_PTH = r'\)'
   OPEN_SQR = r'\['
   CLOSE_SQR = r']'
+
   
   def CTE_NUM(self, token):
     token.value = float(token.value)
