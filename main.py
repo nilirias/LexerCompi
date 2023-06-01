@@ -25,7 +25,7 @@ class MikuParser(Parser):
     return 'program'
     ##print(f'program {p[0]}')
 
-  @_('var_declaration func_declaration main')
+  @_('var_declaration func_declaration main', 'main')
   def declaration(self, p):
     return 'declaration'
     #print(f'declaration {p}')
@@ -75,12 +75,19 @@ class MikuParser(Parser):
   @_('var_type ID multiple_vars \n')
   def var_declaration_func(self, p):
     return 'var_declaration_func'
-
     #print(f'var_declaration_func {p[0]}')
+
+  @_('EQUAL_TO', 'LESS_THAN', 'MORE_THAN', 'DIFFERENT_TO', 'LESS_OR_EQ_THAN',
+     'MORE_OR_EQ_THAN')
+  def rel_op(self, p):
+    self.operadores.append(p[-1])
+    return p[0]
+    #print(self.operadores)
+    #print(f'rel_op {p[0]}')
 
   @_('ID a1 assign expression quads \n')
   def var_assignation(self, p):
-    return 'var_assignation'
+    return p[0]
     #print(f'var_assignation {p[0]}')
   
   @_('ASSIGN')
@@ -104,11 +111,22 @@ class MikuParser(Parser):
     return 'bool'
     #print(f'cte_bool {p[0]}')
 
-  @_('exp rel_op exp', 'exp')
+  @_('exp e3 rel_op exp e3 quads2', 'exp') #aqui estaba el e3 despues de exp
   def expression(self, p):
+    #print(self.operadores)
     self.operandos.append(p[-1])
     return p[0]
     #print(f'expression {p[0]}')
+
+  @_('')
+  def quads2(self, p):
+   print(self.operadores)
+    
+  @_('')
+  def e3 (self,p):
+    self.operandos.append(p[-1])
+    return p[0]
+    #print(f'operandos {self.operandos}')
 
   @_('termino e1 term_op e2 termino e1 quads1 ', 'termino')
   def exp(self, p):
@@ -153,24 +171,21 @@ class MikuParser(Parser):
   def quads(self, p):
     t1 = 0
     myQuad = Quadruple(self.operandos.pop(), self.operandos.pop(), self.operadores.pop(), t1)
-    print(myQuad)
+    self.quadcount += 1
+    print(f'{self.quadcount}. {myQuad}')
 
   @_('')
   def quads1(self, p):
     t1 = 0
     myQuad = Quadruple(self.operandos.pop(), self.operandos.pop(), self.operadores.pop(), t1)
-    print(myQuad)
+    self.quadcount += 1
+    print(f'{self.quadcount}. {myQuad}')
 
-  @_('AND', 'OR')
-  def log_op(self, p):
-    return 'log_op'
-    #print(f'log_op "{p[0]}"')
-
-  @_('LESS_THAN', 'MORE_THAN', 'DIFFERENT_TO', 'LESS_OR_EQ_THAN',
-     'MORE_OR_EQ_THAN', 'EQUAL_TO')
-  def rel_op(self, p):
-    return 'rel_op'
-    #print(f'rel_op {p[0]}')
+  # @_('AND', 'OR')
+  # def log_op(self, p):
+  #   return 'log_op'
+  #   #self.operadores.append(p[-1])
+  #   #print(f'log_op "{p[0]}"')
 
   @_('ID OPEN_PTH func_call_param CLOSE_PTH \n')
   def func_call(self, p):
@@ -217,17 +232,9 @@ class MikuParser(Parser):
     return 'write'
     #print(f'write {p[0]}')
 
-  # @_('COMMA expression', 'empty')
-  # def multiple_expression(self, p):
-  #   return 'multiple_expression'
-
-  # @_('\n stmnt multiple_con_stmnt')
-  # def multiple_con_stmnt(self, p):
-  #   #print(f'multiple_con_stmnt {p[0]}')
-
-  @_('IF con_expression \n stmnt else_stmnt')
+  @_('IF con_expression \n stmnt else_stmnt',)
   def if_stmnt(self, p):
-    return 'if_stmnt'
+    return p[0]
     #print(f'if_stmnt {p[0]}')
 
   @_('\n ELSE \n stmnt END \n', '\n END \n')
@@ -240,10 +247,24 @@ class MikuParser(Parser):
     return 'while_stmnt'
     #print(f'while_stmnt {p[0]}')
 
-  @_('expression log_op expression')
+  @_('expression rel_op e4 expression quads3', 'expression')
   def con_expression(self, p):
-    return 'con_expression'
+    return p[0]
     #print(f'con_expression {p[0]}')
+
+  @_('')
+  def e4(self, p):
+    self.operadores.append(p[-1])
+    # print(self.operandos)
+    # print(self.operadores)
+
+  @_('')
+  def quads3(self, p):
+    t1 = 0
+    myQuad = Quadruple(self.operandos.pop(), self.operandos.pop(), self.operadores.pop(), t1)
+    self.quadcount += 1
+    print(f'{self.quadcount}. {myQuad}')
+    
 
   @_('move_type OPEN_PTH func_call_param CLOSE_PTH')
   def move_func(self, p):
@@ -268,7 +289,6 @@ class MikuParser(Parser):
   @_('')
   def empty(self, p):
     pass
-
 
 # Semantics
 

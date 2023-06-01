@@ -1,13 +1,18 @@
 DRAWING test
-word hola, adios
 MAIN
   number x
   number y
+  x = 2
+  y = 1
   number resultado
-  number n
-  x = 7
-  y = 2
   resultado = x + y
+  number n
   n = 8 * (6/2) + 1
-  write(resultado)
+  if x > y
+    z = 3
+  else
+     if y < x
+      z = 2
+    end
+  end
 END
