@@ -78,10 +78,21 @@ class MikuParser(Parser):
 
     #print(f'var_declaration_func {p[0]}')
 
-  @_('ID ASSIGN expression \n')
+  @_('ID a1 assign expression quads \n')
   def var_assignation(self, p):
     return 'var_assignation'
     #print(f'var_assignation {p[0]}')
+  
+  @_('ASSIGN')
+  def assign(self,p):
+    self.operadores.append(p[-1])
+    #print(self.operadores)
+    return p[0]
+
+  @_('')
+  def a1(self,p):
+    self.operandos.append(p[-1])
+    # print(f'{self.operandos}')
   
   @_('variable', 'CTE_NUM', 'CTE_STR', 'cte_bool', 'func_call')
   def var_cte(self, p):
@@ -95,6 +106,7 @@ class MikuParser(Parser):
 
   @_('exp rel_op exp', 'exp')
   def expression(self, p):
+    self.operandos.append(p[-1])
     return p[0]
     #print(f'expression {p[0]}')
 
