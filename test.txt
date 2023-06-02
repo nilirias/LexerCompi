@@ -8,11 +8,8 @@ MAIN
   resultado = x + y
   number n
   n = 8 * (6/2) + 1
-  if x > y
-    z = 3
-  else
-     if y < x
-      z = 2
+  if x > y AND x == 2
+    x = 1
     end
   end
 END

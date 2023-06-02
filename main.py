@@ -4,7 +4,6 @@ from miku_lexer import MikuLexer
 from miku_quadruple import Quadruple
 #from miku_semanticcube import miku_semantic_cube as sm
 
-
 class MikuParser(Parser):
   debugfile = 'parser.out'
   tokens = MikuLexer.tokens
@@ -89,7 +88,13 @@ class MikuParser(Parser):
   def var_assignation(self, p):
     return p[0]
     #print(f'var_assignation {p[0]}')
-  
+
+  @_('')
+  def quads4(self, p):
+    myQuad = Quadruple(self.operandos.pop(), self.operandos.pop(), self.operadores.pop(), 0)
+    self.quadcount += 1
+    print(f'{self.quadcount}. {myQuad}')
+    
   @_('ASSIGN')
   def assign(self,p):
     self.operadores.append(p[-1])
@@ -111,22 +116,12 @@ class MikuParser(Parser):
     return 'bool'
     #print(f'cte_bool {p[0]}')
 
-  @_('exp e3 rel_op exp e3 quads2', 'exp') #aqui estaba el e3 despues de exp
+  @_('exp e3 rel_op exp e3 quads', 'exp') #aqui estaba el e3 despues de exp
   def expression(self, p):
     #print(self.operadores)
     self.operandos.append(p[-1])
     return p[0]
     #print(f'expression {p[0]}')
-
-  @_('')
-  def quads2(self, p):
-   print(self.operadores)
-    
-  @_('')
-  def e3 (self,p):
-    self.operandos.append(p[-1])
-    return p[0]
-    #print(f'operandos {self.operandos}')
 
   @_('termino e1 term_op e2 termino e1 quads1 ', 'termino')
   def exp(self, p):
@@ -154,38 +149,14 @@ class MikuParser(Parser):
   @_('MULT', 'DIV')
   def fact_op(self, p):
     self.operadores.append(p[-1])
-    # print(self.operadores)
+    print(self.operadores)
     ##print(f'fact_op {p[0]}')
 
-  @_('')
-  def e1 (self,p):
-    self.operandos.append(p[-1])
-    # print(f'operandos {self.operandos}')
-
-  @_('')
-  def e2 (self,p):
+  @_('AND', 'OR')
+  def log_op(self, p):
     self.operadores.append(p[-1])
-    # print(f'operadores {self.operadores}')
-
-  @_('')
-  def quads(self, p):
-    t1 = 0
-    myQuad = Quadruple(self.operandos.pop(), self.operandos.pop(), self.operadores.pop(), t1)
-    self.quadcount += 1
-    print(f'{self.quadcount}. {myQuad}')
-
-  @_('')
-  def quads1(self, p):
-    t1 = 0
-    myQuad = Quadruple(self.operandos.pop(), self.operandos.pop(), self.operadores.pop(), t1)
-    self.quadcount += 1
-    print(f'{self.quadcount}. {myQuad}')
-
-  # @_('AND', 'OR')
-  # def log_op(self, p):
-  #   return 'log_op'
-  #   #self.operadores.append(p[-1])
-  #   #print(f'log_op "{p[0]}"')
+    #return p[0]
+    #print(f'log_op "{p[0]}"')
 
   @_('ID OPEN_PTH func_call_param CLOSE_PTH \n')
   def func_call(self, p):
@@ -232,7 +203,7 @@ class MikuParser(Parser):
     return 'write'
     #print(f'write {p[0]}')
 
-  @_('IF con_expression \n stmnt else_stmnt',)
+  @_('IF log_exp \n stmnt else_stmnt',)
   def if_stmnt(self, p):
     return p[0]
     #print(f'if_stmnt {p[0]}')
@@ -242,30 +213,20 @@ class MikuParser(Parser):
     return 'else_stmnt'
     #print(f'else_stmnt {p[0]}')
 
-  @_('WHILE con_expression \n stmnt \n END \n')
+  @_('WHILE log_exp \n stmnt \n END \n')
   def while_stmnt(self, p):
     return 'while_stmnt'
     #print(f'while_stmnt {p[0]}')
 
-  @_('expression rel_op e4 expression quads3', 'expression')
+  @_('expression rel_op e4 expression quads', 'con_expression', 'expression')
   def con_expression(self, p):
     return p[0]
     #print(f'con_expression {p[0]}')
 
-  @_('')
-  def e4(self, p):
-    self.operadores.append(p[-1])
-    # print(self.operandos)
-    # print(self.operadores)
-
-  @_('')
-  def quads3(self, p):
-    t1 = 0
-    myQuad = Quadruple(self.operandos.pop(), self.operandos.pop(), self.operadores.pop(), t1)
-    self.quadcount += 1
-    print(f'{self.quadcount}. {myQuad}')
+  @_('con_expression log_op con_expression', 'expression')
+  def log_exp(self,p):
+    return p[0]
     
-
   @_('move_type OPEN_PTH func_call_param CLOSE_PTH')
   def move_func(self, p):
     return 'move_func'
@@ -289,8 +250,51 @@ class MikuParser(Parser):
   @_('')
   def empty(self, p):
     pass
-
+    
 # Semantics
+
+  @_('')
+  def e1 (self,p):
+    self.operandos.append(p[-1])
+    # print(f'operandos {self.operandos}')
+
+  @_('')
+  def e2 (self,p):
+    self.operadores.append(p[-1])
+    # print(f'operadores {self.operadores}')
+
+  @_('')
+  def e3 (self,p):
+    self.operandos.append(p[-1])
+    return p[0]
+    #print(f'operandos {self.operandos}')
+
+  @_('')
+  def e4(self, p):
+    self.operadores.append(p[-1])
+
+  @_('')
+  def quads(self, p):
+    t1 = 0
+    myQuad = Quadruple(self.operandos.pop(), self.operandos.pop(), self.operadores.pop(), t1)
+    self.quadcount += 1
+    print(f'aaaaaaaaaaaaaaaaaaaaaaaaaaaa {self.operandos}')
+    print(f'{self.quadcount}. {myQuad}')
+    if len(self.operandos) == 1:
+      self.operandos.pop()
+
+  @_('')
+  def quads1(self, p):
+    t1 = 0
+    myQuad = Quadruple(self.operandos.pop(), self.operandos.pop(), self.operadores.pop(), t1)
+    self.quadcount += 1
+    print(f'{self.quadcount}. {myQuad}')
+    
+  @_('')
+  def lo1(self, p):
+    self.operadores.append(p[-1])
+    print(f'hola {self.operandos}')
+    print(self.operadores)
 
 if __name__ == '__main__':
   lexer = MikuLexer()
