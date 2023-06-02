@@ -8,6 +8,6 @@ MAIN
   x = 7
   y = 2
   resultado = x + y
-  n = 8 * (4/2) + 1
+  n = 8 * (6/2) + 1
   write(resultado)
 END
