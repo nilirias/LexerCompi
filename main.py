@@ -20,7 +20,7 @@ class MikuParser(Parser):
     temporal = 0
 
     # Grammar rules and actions
-    @_('DRAWING ID declaration')
+    @_('DRAWING ID \n declaration')
     def program(self, p):
         for i in self.quadruples:
             print(i)
@@ -29,7 +29,7 @@ class MikuParser(Parser):
     def declaration(self, p):
         return p[0]
 
-    @_('var_type ID multiple_var \n')
+    @_('var_type ID multiple_var \n', 'empty')
     def var_declaration(self, p):
         return p[0]
 
@@ -73,141 +73,149 @@ class MikuParser(Parser):
     def var_declaration_func(self, p):
         return p[0]
 
-    @_('id assign expression e3 \n')
+    @_('id e5 assign e6 expression \n')
     def var_assignation(self, p):
         #self.operandos.append(p[-1])
        # print(f'var assign {p[0]}')
         return p[0]
+
     @_('')
-    def e3(self, p):
-      ro = self.operandos.pop()
-      lo = self.operandos.pop()
-      op = '='
-      self.temporal = self.temporal + 1
-      self.quadruples.append(Quadruple(ro, lo, op, self.temporal))
-      self.operandos.append(self.temporal)
-      print(self.operadores)
-      
+    def e5(self, p):
+      self.operandos.append(p[-1])
+
+    @_('')
+    def e6(self, p):
+      self.operadores.append(p[-1])
+
     @_('ID')
     def id(self, p):
-      if(p != None):
-        self.operandos.append(p[-1])
-        return p[-1]
+      return p[0]
 
     @_('ASSIGN')
     def assign(self, p):
-        self.operadores.append(p[-1])
-        return p[-1]
+        return p[0]
 
     @_('variable', 'CTE_NUM', 'CTE_STR', 'cte_bool', 'func_call')
     def var_cte(self, p):
       #print(f'var_cte {p[-1]}')
       #self.operandos.append(p[-1])
+      #print(p[0])
       return p[0]
 
     @_('TRUE', 'FALSE')
     def cte_bool(self, p):
         return p[0]
 
-    @_('exp rel_op exp', 'exp')
+    @_('exp rel_op e4 exp', 'exp')
     def expression(self, p):
-        print(f'expression operandos {self.operandos}')
-        print(f'expression {p[-1]}')
+       return p[0]
+
+    #Punto neuralgico para expression
+    @_('')
+    def e4(self, p):
+      self.operadores.append(p[-1])
+      print(f'e4 {self.operadores}')
+      
+    @_('termino term_op e3 termino q2', 'termino')
+    def exp(self, p):
         return p[-1]
 
-    @_('termino term_op termino e1', 'termino e1')
-    def exp(self, p):
-        #print(f'exp {p[-1]}')
-        #self.operandos.append(p[0])
-        return p[0]
-
+    #Punto neuralgico para exp
     @_('')
-    def e1(self, p):
-        top_op = self.operadores.pop()
-        top_oper = self.operandos.pop()
-        print(f'e1 operadores {top_op}')
-        print(f'e1 operadores {self.operadores}')
-        if (top_oper != None):
-          if (top_op == '+' or top_op == '-'):
-              top_oper = self.operandos.pop()
-              ro = top_oper
-              lo = self.operandos.pop()
-              op = top_op
-              self.temporal = self.temporal + 1
-              print(f'e1 operandos quads {ro, lo, op, self.temporal}')
-              self.quadruples.append(Quadruple(ro, lo, op, self.temporal))
-              self.operandos.append(self.temporal)
+    def e3(self, p):
+      self.operadores.append(p[-1])
+      print(f'e3 {self.operadores}')
+
+    #quads suma resta
+    @_('')
+    def q2(self,p):
+      madeSum = False
+      while len(self.operadores) > 0 and not madeSum:
+        op = self.operadores.pop()
+        if(op != '='):
+          lo = self.operandos.pop()
+          ro = self.operandos.pop()
+          self.temporal = self.temporal + 1
+          self.operandos.append(self.temporal)
         else:
-          print(f'e1 = {self.operandos}')
-          self.operadores.append(top_op)
+          lo = self.operandos.pop()
+          ro = None
+          self.temporal = self.operandos.pop()
+        print(f'q1 {lo, ro, op, self.temporal}')
+        print(f'q1 append temp {self.operandos}')
+        myQuad = Quadruple(lo, ro, op, self.temporal)
+        self.quadruples.append(myQuad)
+        if (op == '+' or op == '-'):
+          madeSum = True
 
     @_('SUM', 'SUB')
     def term_op(self, p):
-        self.operadores.append(p[-1])
-        print(self.operadores)
+        return p[0]
+
+    @_('factor fact_op e2 factor q1', 'factor q1')
+    def termino(self, p):
+        if (len(self.operandos) == 0):
+          print('termino')
         return p[-1]
 
-    @_('factor fact_op factor e2', 'factor e2')
-    def termino(self, p):
-        self.operandos.append(p[0])
-        return p[0]       
+    #quads mult div
+    @_('')
+    def q1(self,p):
+      if(len(self.operadores) > 0):
+        op = self.operadores.pop()
+        if(op != '='):
+          lo = self.operandos.pop()
+          ro = self.operandos.pop()
+          self.temporal = self.temporal + 1
+          self.operandos.append(self.temporal)
+          print(f' 169 {self.operandos}')
+          return
+        else:
+          lo = self.operandos.pop()
+          ro = None  
+          self.temporal = self.operandos.pop()
+          print(f' 174 {len(self.operandos)}')  
+          
+        print(f'q1 {lo, ro, op, self.temporal}')
+        print(f'q1 append temp {self.operandos}')
+        myQuad = Quadruple(lo, ro, op, self.temporal)
+        self.quadruples.append(myQuad)
+  
 
+    #Punto neuralgico para terminos
     @_('')
     def e2(self, p):
-        print(f'e2 {self.operadores}')
-        top_op = self.operadores.pop()
-        top_oper = self.operandos.pop()
-        print(f'e2 top op {top_op}')
-        print(f'e2 operadores {self.operadores}')
-        if(top_oper != None):
-          if (top_op == '*' or top_op == '/'):
-              ro = top_oper
-              lo = self.operandos.pop()
-              op = top_op
-              self.temporal = self.temporal + 1
-              print(f'e2 operandos quads {ro, lo, op, self.temporal}')
-              self.quadruples.append(Quadruple(ro, lo, op, self.temporal))
-              self.operandos.append(self.temporal)
-            #print(self.operandos)
-          if (top_op == '+' or top_op == '-'):
-              print(f'top op 173 {top_op}')
-              top_oper = self.operandos.pop()
-              ro = top_oper
-              lo = self.operandos.pop()
-              op = top_op
-              self.temporal = self.temporal + 1
-              print(f'e1 operandos quads {ro, lo, op, self.temporal}')
-              self.quadruples.append(Quadruple(ro, lo, op, self.temporal))
-              self.operandos.append(self.temporal)
-          if (top_op == '='):  #e3
-              ro = top_oper
-              lo = self.operandos.pop()
-              op = top_op
-              self.temporal = self.temporal + 1
-              self.quadruples.append(Quadruple(ro, lo, op, self.temporal))
-              self.operandos.append(self.temporal)
-              self.operadores.append(top_op)
-            
+      print(p[-1])
+      self.operadores.append(p[-1])
+      print(f'e2 {self.operadores}')
 
     @_('MULT', 'DIV')
     def fact_op(self, p):
-        self.operadores.append(p[-1])
-        #print(self.operadores)
-        return p[-1]
+        return p[0]
 
-    @_('open_pth expression close_pth', 'var_cte', 'term_op var_cte', 'expression')
+    @_('open_pth expression close_pth', 'expression', 'var_cte e1')
     def factor(self, p):
-        self.operandos.append(p[0])
         #print(f'factooor {p[0]}')
         return p[0]
 
+    #Punto neuralgico para todos los operandos
+    @_('')
+    def e1(self, p):
+      if(p[-1] != None):
+        self.operandos.append(p[-1])
+        print(self.operandos)
+      else:
+        pass
+
     @_('OPEN_PTH')
     def open_pth(self, p):
-      self.operandos.pop()
+      if(p[0] == '('):
+        return None
 
     @_('CLOSE_PTH')
     def close_pth(self, p):
-      self.operandos.pop()
+      if(p[0] == ')'):
+        return None
 
     @_('AND', 'OR')
     def log_op(self, p):

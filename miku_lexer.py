@@ -10,7 +10,6 @@ class MikuLexer(Lexer):
 
   reserved_words = ['drawing', 'number', 'word', 'bool', 'read', 'write', 'if', 'else', 'while', 'left', 'right', 'forward', 'pen_up', 'pen_down', 'center', 'func', 'true', 'false', 'and', 'or', 'end', 'void', 'main']
 
-  literals = {'+'}
   ignore = ' \t'
   ignore_comment = r'#.*'
 
@@ -44,12 +43,6 @@ class MikuLexer(Lexer):
     if(t.value.lower() in self.reserved_words):
       t.type = t.value.upper()
     return t
-
-  # @_(r'+')
-  # def SUM(self, t):
-  #   t.value = '+'
-  #   self.nesting_level += 1
-  #   return t
   
   @_(r'\n+')
   def ignore_newline(self, t):

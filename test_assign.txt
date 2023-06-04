@@ -1,6 +1,5 @@
 DRAWING test
-number y
 MAIN
   number y
-  y = x + 6 * 3 - (8/4)
+  y = 8 * (6/2) + 1
 END
