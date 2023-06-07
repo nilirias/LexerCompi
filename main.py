@@ -154,6 +154,7 @@ class MikuParser(Parser):
 
     @_('factor fact_op e2 factor q1', 'factor q1')
     def termino(self, p):
+        print('no cerooooooo')
         if (len(self.operandos) == 0):
           print('termino')
         return p[-1]
@@ -196,7 +197,7 @@ class MikuParser(Parser):
     @_('open_pth expression close_pth', 'expression', 'var_cte e1')
     def factor(self, p):
         #print(f'factooor {p[0]}')
-        return p[0]
+        return p[-1]
 
     #Punto neuralgico para todos los operandos
     @_('')
