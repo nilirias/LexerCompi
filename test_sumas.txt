@@ -1,0 +1,5 @@
+DRAWING test
+MAIN
+  number y
+  y = 8 + 9
+END

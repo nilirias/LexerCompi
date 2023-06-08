@@ -4,6 +4,7 @@ from miku_lexer import MikuLexer
 from miku_quadruple import Quadruple
 #from miku_semanticcube import miku_semantic_cube as sm
 
+
 class MikuParser(Parser):
     debugfile = 'parser.out'
     tokens = MikuLexer.tokens
@@ -62,34 +63,36 @@ class MikuParser(Parser):
         print(f'multiple_parameters {p[0]}')
         return p[0]
 
-    @_('var_assignation stmnt', 'func_call stmnt', 'read stmnt',
-       'write stmnt', 'if_stmnt stmnt', 'while_stmnt stmnt', 'move_func stmnt',
+    @_('var_assignation stmnt', 'func_call stmnt', 'read stmnt', 'write stmnt',
+       'if_stmnt stmnt', 'while_stmnt stmnt', 'move_func stmnt',
        'pen_func stmnt', 'var_declaration_func stmnt', 'empty')
     def stmnt(self, p):
         #print(f'stmnt {p[0]}')
         return p[0]
-      
+
     @_('var_type ID multiple_vars \n')
     def var_declaration_func(self, p):
         return p[0]
 
-    @_('id e5 assign e6 expression \n')
+    @_('id e5 assign e6 expression q3 \n')
     def var_assignation(self, p):
         #self.operandos.append(p[-1])
-       # print(f'var assign {p[0]}')
+        print(f'var assign {p[0]}')
         return p[0]
 
     @_('')
     def e5(self, p):
-      self.operandos.append(p[-1])
+        print(f'e5 {p[-1]}')
+        self.operandos.append(p[-1])
 
     @_('')
     def e6(self, p):
-      self.operadores.append(p[-1])
+        print(f'e6 {p[-1]}')
+        self.operadores.append(p[-1])
 
     @_('ID')
     def id(self, p):
-      return p[0]
+        return p[0]
 
     @_('ASSIGN')
     def assign(self, p):
@@ -97,10 +100,10 @@ class MikuParser(Parser):
 
     @_('variable', 'CTE_NUM', 'CTE_STR', 'cte_bool', 'func_call')
     def var_cte(self, p):
-      #print(f'var_cte {p[-1]}')
-      #self.operandos.append(p[-1])
-      #print(p[0])
-      return p[0]
+        print(f'var_cte {p[-1]}')
+        #self.operandos.append(p[-1])
+        #print(p[0])
+        return p[0]
 
     @_('TRUE', 'FALSE')
     def cte_bool(self, p):
@@ -108,87 +111,135 @@ class MikuParser(Parser):
 
     @_('exp rel_op e4 exp', 'exp')
     def expression(self, p):
-       return p[0]
+        print("expression")
+        return p[0]
 
     #Punto neuralgico para expression
     @_('')
     def e4(self, p):
-      self.operadores.append(p[-1])
-      print(f'e4 {self.operadores}')
-      
-    @_('termino term_op e3 termino q2', 'termino')
+        self.operadores.append(p[-1])
+        print(f'e4 {self.operadores}')
+
+    @_('termino term_op e3 termino q1', 'termino q1')
     def exp(self, p):
+        print(f'exp {p[-1]}')
         return p[-1]
 
     #Punto neuralgico para exp
     @_('')
     def e3(self, p):
-      self.operadores.append(p[-1])
-      print(f'e3 {self.operadores}')
+        self.operadores.append(p[-1])
+        print(f'e3 {self.operadores}')
 
     #quads suma resta
     @_('')
-    def q2(self,p):
-      madeSum = False
-      while len(self.operadores) > 0 and not madeSum:
-        op = self.operadores.pop()
-        if(op != '='):
-          lo = self.operandos.pop()
-          ro = self.operandos.pop()
-          self.temporal = self.temporal + 1
-          self.operandos.append(self.temporal)
-        else:
-          lo = self.operandos.pop()
-          ro = None
-          self.temporal = self.operandos.pop()
-        print(f'q1 {lo, ro, op, self.temporal}')
-        print(f'q1 append temp {self.operandos}')
-        myQuad = Quadruple(lo, ro, op, self.temporal)
-        self.quadruples.append(myQuad)
-        if (op == '+' or op == '-'):
-          madeSum = True
+    def q2(self, p):
+        print(f'q2 {self.operadores} {self.operandos}')
+        # madeSum = False
+        while len(self.operadores) > 0:  #and not madeSum:
+            op = self.operadores.pop()
+            print(f'q2 op:{op}')
+            # if (op != '='):
+            if (op == '*' or op == '/'):
+                print("q2 yeiii")
+                lo = self.operandos.pop()
+                ro = self.operandos.pop()
+                self.temporal = self.temporal + 1
+                self.operandos.append(f't{self.temporal}')
+                # else:
+                #     lo = self.operandos.pop()
+                #     ro = None
+                #     self.temporal = self.operandos.pop()
+                print(f'q2 {lo, ro, op, self.temporal}')
+                print(f'q2 append temp {self.operandos}')
+                myQuad = Quadruple(lo, ro, op, f't{self.temporal}')
+                self.quadruples.append(myQuad)
+            else:
+                print("q2 unu")
+                self.operadores.append(op)
+                return
+            # if (op == '+' or op == '-'):
+            #     madeSum = True
+#ola ale fui al oxxo traje papitas, quieres?
 
     @_('SUM', 'SUB')
     def term_op(self, p):
-        return p[0]
-
-    @_('factor fact_op e2 factor q1', 'factor q1')
-    def termino(self, p):
-        print('no cerooooooo')
-        if (len(self.operandos) == 0):
-          print('termino')
         return p[-1]
 
-    #quads mult div
+    @_('factor fact_op e2 factor q2', 'factor q2')
+    def termino(self, p):
+        print('termino no cerooooooo')
+        if (len(self.operandos) == 0):
+            print('termino')
+        return p[-1]
+
+#ola ale
+#hola nina
+
+#quads mult div
+
     @_('')
-    def q1(self,p):
-      if(len(self.operadores) > 0):
-        op = self.operadores.pop()
-        if(op != '='):
-          lo = self.operandos.pop()
-          ro = self.operandos.pop()
-          self.temporal = self.temporal + 1
-          self.operandos.append(self.temporal)
-          print(f' 169 {self.operandos}')
-          return
-        else:
-          lo = self.operandos.pop()
-          ro = None  
-          self.temporal = self.operandos.pop()
-          print(f' 174 {len(self.operandos)}')  
-          
-        print(f'q1 {lo, ro, op, self.temporal}')
-        print(f'q1 append temp {self.operandos}')
-        myQuad = Quadruple(lo, ro, op, self.temporal)
-        self.quadruples.append(myQuad)
-  
+    def q1(self, p):
+        print(f'q1 {self.operadores} {self.operandos}')
+        if (len(self.operadores) > 0):
+            op = self.operadores.pop()
+            # if (op != '='):
+            if (op == '+' or op == '-'):
+                lo = self.operandos.pop()
+                ro = self.operandos.pop()
+                self.temporal = self.temporal + 1
+                self.operandos.append(f't{self.temporal}')
+                print(f' 169 {self.operandos}')
+                # return
+                # else:
+                #     lo = self.operandos.pop()
+                #     ro = None
+                #     self.temporal = self.operandos.pop()
+                #     print(f' 174 {len(self.operandos)}')
+
+                print(f'q1 {lo, ro, op, self.temporal}')
+                print(f'q1 append temp {self.operandos}')
+                myQuad = Quadruple(lo, ro, op, f't{self.temporal}')
+                self.quadruples.append(myQuad)
+            else:
+                self.operadores.append(op)
+
+    @_('')
+    def q3(self, p):
+        print(f'q3 {self.operadores} {self.operandos}')
+        if (len(self.operadores) > 0):
+            op = self.operadores.pop()
+            # if (op != '='):
+            if (op == '='):
+                lo = self.operandos.pop()
+                ro = None
+                self.temporal = self.operandos.pop()
+                print(f' 174 {len(self.operandos)}')
+                # lo = self.operandos.pop()
+                # ro = self.operandos.pop()
+                # self.temporal = self.temporal + 1
+                # self.operandos.append(self.temporal)
+                # print(f' 169 {self.operandos}')
+                # return
+                # else:
+                #     lo = self.operandos.pop()
+                #     ro = None
+                #     self.temporal = self.operandos.pop()
+                #     print(f' 174 {len(self.operandos)}')
+
+                print(f'q3 {lo, ro, op, self.temporal}')
+                print(f'q3 append temp {self.operandos}')
+                myQuad = Quadruple(lo, ro, op, self.temporal)
+                self.quadruples.append(myQuad)
+            else:
+                self.operadores.append(op)
 
     #Punto neuralgico para terminos
     @_('')
     def e2(self, p):
-      print(p[-1])
-      self.operadores.append(p[-1])
-      print(f'e2 {self.operadores}')
+        print(p[-1])
+        self.operadores.append(p[-1])
+        print(f'e2 {self.operadores}')
 
     @_('MULT', 'DIV')
     def fact_op(self, p):
@@ -196,27 +247,29 @@ class MikuParser(Parser):
 
     @_('open_pth expression close_pth', 'expression', 'var_cte e1')
     def factor(self, p):
-        #print(f'factooor {p[0]}')
+        print(f'factooor {p[0]}')
         return p[-1]
 
     #Punto neuralgico para todos los operandos
     @_('')
     def e1(self, p):
-      if(p[-1] != None):
-        self.operandos.append(p[-1])
-        print(self.operandos)
-      else:
-        pass
+        if (p[-1] != None):
+            self.operandos.append(p[-1])
+            print("e1", self.operandos)
+        else:
+            pass
 
     @_('OPEN_PTH')
     def open_pth(self, p):
-      if(p[0] == '('):
-        return None
+        if (p[0] == '('):
+            self.operadores.append('(')
+            return None
 
     @_('CLOSE_PTH')
     def close_pth(self, p):
-      if(p[0] == ')'):
-        return None
+        if (p[0] == ')'):
+            (f'closepath {self.operadores.pop()}')
+            return None
 
     @_('AND', 'OR')
     def log_op(self, p):
@@ -309,7 +362,7 @@ class MikuParser(Parser):
 if __name__ == '__main__':
     lexer = MikuLexer()
     parser = MikuParser()
-    filename = 'test_assign.txt'
+    filename = 'test.txt'
 
     with open(filename) as fp:
         try:

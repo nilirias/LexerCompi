@@ -1,4 +1,5 @@
 class Quadruple:
+
     def __init__(self, lo, ro, op, res):
         self.lo = lo
         self.ro = ro
@@ -6,4 +7,4 @@ class Quadruple:
         self.res = res
 
     def __str__(self):
-        return f'{self.op} {self.lo} {self.ro} t{self.res}'
+        return f'{self.op} {self.lo} {self.ro} {self.res}'

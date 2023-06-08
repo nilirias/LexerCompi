@@ -1,5 +1,5 @@
 DRAWING test
 MAIN
   number y
-  y = 8 * (6/2) + 1
+  y = 8 * (6/2) + 1 / (10 - 4) - 5 * 7 
 END
