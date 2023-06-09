@@ -4,7 +4,9 @@ MAIN
   y = 10
   x = 5
   z = x + y
-  if 1 < 2 AND 3 > 1
-    n = 8
+  if 1 < 2 or 3 > 1
+    n = 8 * (6/2) + 1 / (10 - 4) - 5 * 7 * 1 * 4 / 2.9
+  else
+    n = 1
   end
 END

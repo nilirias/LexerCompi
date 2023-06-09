@@ -5,7 +5,6 @@ from miku_quadruple import Quadruple
 #from miku_semanticcube import miku_semantic_cube as sm
 import re
 
-
 class MikuParser(Parser):
     debugfile = 'parser.out'
     tokens = MikuLexer.tokens
