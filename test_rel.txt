@@ -1,9 +1,10 @@
 DRAWING test
 MAIN
-  number y
-  y = 1
-  x = 2
-  if 1 < 2
-    WRITE(HOLA)
+  number x
+  y = 10
+  x = 5
+  z = x + y
+  if 1 < 2 AND 3 > 1
+    n = 8
   end
 END

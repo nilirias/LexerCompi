@@ -3,12 +3,15 @@ from sly.yacc import _decorator as _
 from miku_lexer import MikuLexer
 from miku_quadruple import Quadruple
 #from miku_semanticcube import miku_semantic_cube as sm
+import re
 
 
 class MikuParser(Parser):
     debugfile = 'parser.out'
     tokens = MikuLexer.tokens
     start = 'program'
+
+    and_pattern = re.compile("^([A-Z][0-9]+)+$")
 
     quadruples = []
     quadcount = 0
@@ -116,9 +119,10 @@ class MikuParser(Parser):
 
     @_('')
     def q4(self, p):
+        print(f'q4 {self.operadores} {self.operandos}')
         while len(self.operadores) > 0:
             op = self.operadores.pop()
-            print(f'q4 op:{op}')
+            print(f'q4 op: {op}')
             if (op == '>' or op == '<' or op == '<=' or op == '>='
                     or op == '==' or op == '<>'):
                 lo = self.operandos.pop()
@@ -176,7 +180,7 @@ class MikuParser(Parser):
     def term_op(self, p):
         return p[-1]
 
-    @_('factor fact_op e2 factor q2', 'factor q2')
+    @_('factor fact_op e2 expression q2', 'factor q2')
     def termino(self, p):
         print('termino no cerooooooo')
         if (len(self.operandos) == 0):
@@ -231,8 +235,9 @@ class MikuParser(Parser):
     def fact_op(self, p):
         return p[0]
 
-    @_('open_pth expression close_pth', 'expression', 'var_cte e1')
+    @_('open_pth expression close_pth', 'var_cte e1')
     def factor(self, p):
+        print(f'factor {p[-1]}')
         return p[-1]
 
     #Punto neuralgico para todos los operandos
@@ -259,7 +264,7 @@ class MikuParser(Parser):
     @_('AND', 'OR')
     def log_op(self, p):
         print(f'log_op {p[0]}')
-        self.operadores.append(p[-1])
+        #self.operadores.append(p[-1])
         #print(self.operadores)
         return p[0]
 
@@ -318,8 +323,9 @@ class MikuParser(Parser):
     def while_stmnt(self, p):
         return p[0]
 
-    @_('expression q5 log_op e7 expression q5', 'expression')
+    @_('expression q5 log_op e7 expression q5', 'expression q5')
     def con_expression(self, p):
+        print(f'con_expression {p[-1]}')
         return p[-1]
 
     @_('')
@@ -333,7 +339,7 @@ class MikuParser(Parser):
         while len(self.operadores) > 0:
             op = self.operadores.pop()
             print(f'q5 op:{op}')
-            if (op == 'and' or op == 'or'):
+            if (op.lower() == 'and' or op.lower() == 'or'):
                 print("q5 yeiii")
                 lo = self.operandos.pop()
                 ro = self.operandos.pop()
