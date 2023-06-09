@@ -74,7 +74,7 @@ class MikuParser(Parser):
     def var_declaration_func(self, p):
         return p[0]
 
-    @_('id e5 assign e6 expression q3 \n')
+    @_('ID e5 assign e6 expression q3 \n')
     def var_assignation(self, p):
         #self.operandos.append(p[-1])
         print(f'var assign {p[0]}')
@@ -90,9 +90,9 @@ class MikuParser(Parser):
         print(f'e6 {p[-1]}')
         self.operadores.append(p[-1])
 
-    @_('ID')
-    def id(self, p):
-        return p[0]
+    # @_('ID')
+    # def id(self, p):
+    #     return p[0]
 
     @_('ASSIGN')
     def assign(self, p):
@@ -109,15 +109,34 @@ class MikuParser(Parser):
     def cte_bool(self, p):
         return p[0]
 
-    @_('exp rel_op e4 exp', 'exp')
+    @_('exp rel_op exp q4', 'exp q4')
     def expression(self, p):
-        print("expression")
-        return p[0]
+        print("expression AAAAAAAAAAAAAAAA")
+        return p[-1]
+
+    @_('')
+    def q4(self, p):
+        while len(self.operadores) > 0:
+            op = self.operadores.pop()
+            print(f'q4 op:{op}')
+            if (op == '>' or op == '<' or op == '<=' or op == '>='
+                    or op == '==' or op == '<>'):
+                lo = self.operandos.pop()
+                ro = self.operandos.pop()
+                self.temporal = self.temporal + 1
+                self.operandos.append(self.temporal)
+                myQuad = Quadruple(lo, ro, op, self.temporal)
+                self.quadruples.append(myQuad)
+            else:
+                self.operadores.append(op)
+                return
 
     #Punto neuralgico para expression
     @_('')
     def e4(self, p):
+        print(f'e4 before {self.operadores}')
         self.operadores.append(p[-1])
+        self.operadores.append('tururururu')
         print(f'e4 {self.operadores}')
 
     @_('termino term_op e3 termino q1', 'termino q1')
@@ -135,32 +154,23 @@ class MikuParser(Parser):
     @_('')
     def q2(self, p):
         print(f'q2 {self.operadores} {self.operandos}')
-        # madeSum = False
-        while len(self.operadores) > 0:  #and not madeSum:
+        while len(self.operadores) > 0:
             op = self.operadores.pop()
             print(f'q2 op:{op}')
-            # if (op != '='):
             if (op == '*' or op == '/'):
                 print("q2 yeiii")
                 lo = self.operandos.pop()
                 ro = self.operandos.pop()
                 self.temporal = self.temporal + 1
-                self.operandos.append(f't{self.temporal}')
-                # else:
-                #     lo = self.operandos.pop()
-                #     ro = None
-                #     self.temporal = self.operandos.pop()
+                self.operandos.append(self.temporal)
                 print(f'q2 {lo, ro, op, self.temporal}')
                 print(f'q2 append temp {self.operandos}')
-                myQuad = Quadruple(lo, ro, op, f't{self.temporal}')
+                myQuad = Quadruple(lo, ro, op, self.temporal)
                 self.quadruples.append(myQuad)
             else:
                 print("q2 unu")
                 self.operadores.append(op)
                 return
-            # if (op == '+' or op == '-'):
-            #     madeSum = True
-#ola ale fui al oxxo traje papitas, quieres?
 
     @_('SUM', 'SUB')
     def term_op(self, p):
@@ -173,9 +183,6 @@ class MikuParser(Parser):
             print('termino')
         return p[-1]
 
-#ola ale
-#hola nina
-
 #quads mult div
 
     @_('')
@@ -183,23 +190,15 @@ class MikuParser(Parser):
         print(f'q1 {self.operadores} {self.operandos}')
         if (len(self.operadores) > 0):
             op = self.operadores.pop()
-            # if (op != '='):
             if (op == '+' or op == '-'):
                 lo = self.operandos.pop()
                 ro = self.operandos.pop()
+                print(f'q1 temporal {self.temporal} {type(self.temporal)}')
                 self.temporal = self.temporal + 1
-                self.operandos.append(f't{self.temporal}')
-                print(f' 169 {self.operandos}')
-                # return
-                # else:
-                #     lo = self.operandos.pop()
-                #     ro = None
-                #     self.temporal = self.operandos.pop()
-                #     print(f' 174 {len(self.operandos)}')
-
+                self.operandos.append(self.temporal)
                 print(f'q1 {lo, ro, op, self.temporal}')
                 print(f'q1 append temp {self.operandos}')
-                myQuad = Quadruple(lo, ro, op, f't{self.temporal}')
+                myQuad = Quadruple(lo, ro, op, self.temporal)
                 self.quadruples.append(myQuad)
             else:
                 self.operadores.append(op)
@@ -209,27 +208,14 @@ class MikuParser(Parser):
         print(f'q3 {self.operadores} {self.operandos}')
         if (len(self.operadores) > 0):
             op = self.operadores.pop()
-            # if (op != '='):
             if (op == '='):
                 lo = self.operandos.pop()
                 ro = None
-                self.temporal = self.operandos.pop()
+                temp = self.operandos.pop()
                 print(f' 174 {len(self.operandos)}')
-                # lo = self.operandos.pop()
-                # ro = self.operandos.pop()
-                # self.temporal = self.temporal + 1
-                # self.operandos.append(self.temporal)
-                # print(f' 169 {self.operandos}')
-                # return
-                # else:
-                #     lo = self.operandos.pop()
-                #     ro = None
-                #     self.temporal = self.operandos.pop()
-                #     print(f' 174 {len(self.operandos)}')
-
-                print(f'q3 {lo, ro, op, self.temporal}')
+                print(f'q3 {lo, ro, op, temp}')
                 print(f'q3 append temp {self.operandos}')
-                myQuad = Quadruple(lo, ro, op, self.temporal)
+                myQuad = Quadruple(lo, ro, op, temp)
                 self.quadruples.append(myQuad)
             else:
                 self.operadores.append(op)
@@ -247,7 +233,6 @@ class MikuParser(Parser):
 
     @_('open_pth expression close_pth', 'expression', 'var_cte e1')
     def factor(self, p):
-        print(f'factooor {p[0]}')
         return p[-1]
 
     #Punto neuralgico para todos los operandos
@@ -273,7 +258,8 @@ class MikuParser(Parser):
 
     @_('AND', 'OR')
     def log_op(self, p):
-        self.operadores.append(p[0])
+        print(f'log_op {p[0]}')
+        self.operadores.append(p[-1])
         #print(self.operadores)
         return p[0]
 
@@ -281,7 +267,7 @@ class MikuParser(Parser):
        'MORE_OR_EQ_THAN', 'EQUAL_TO')
     def rel_op(self, p):
         #print(f'rel_op {p[0]}')
-        self.operadores.append(p[0])
+        self.operadores.append(p[-1])
         #print(self.operadores)
 
     @_('ID OPEN_PTH func_call_param CLOSE_PTH \n')
@@ -332,9 +318,35 @@ class MikuParser(Parser):
     def while_stmnt(self, p):
         return p[0]
 
-    @_('expression log_op expression')
+    @_('expression q5 log_op e7 expression q5', 'expression')
     def con_expression(self, p):
-        print(f'con_expression {p[0]}')
+        return p[-1]
+
+    @_('')
+    def e7(self, p):
+        self.operadores.append(p[-1])
+        print(f' e7 {self.operadores}')
+
+    @_('')
+    def q5(self, p):
+        print(f'q5 {self.operadores} {self.operandos}')
+        while len(self.operadores) > 0:
+            op = self.operadores.pop()
+            print(f'q5 op:{op}')
+            if (op == 'and' or op == 'or'):
+                print("q5 yeiii")
+                lo = self.operandos.pop()
+                ro = self.operandos.pop()
+                self.temporal = self.temporal + 1
+                self.operandos.append(self.temporal)
+                print(f'q5 {lo, ro, op, self.temporal}')
+                print(f'q5 append temp {self.operandos}')
+                myQuad = Quadruple(lo, ro, op, self.temporal)
+                self.quadruples.append(myQuad)
+            else:
+                print("q5 unu")
+                self.operadores.append(op)
+                return
 
     @_('move_type OPEN_PTH func_call_param CLOSE_PTH')
     def move_func(self, p):
@@ -362,7 +374,7 @@ class MikuParser(Parser):
 if __name__ == '__main__':
     lexer = MikuLexer()
     parser = MikuParser()
-    filename = 'test.txt'
+    filename = 'test_rel.txt'
 
     with open(filename) as fp:
         try:

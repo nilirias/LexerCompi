@@ -1,0 +1,9 @@
+DRAWING test
+MAIN
+  number y
+  number x
+  number z
+  y = 10
+  x = 5
+  z = x + y
+END

@@ -1,0 +1,9 @@
+DRAWING test
+MAIN
+  number y
+  y = 1
+  x = 2
+  if 1 < 2
+    WRITE(HOLA)
+  end
+END
