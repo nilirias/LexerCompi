@@ -2,6 +2,8 @@ from sly import Parser
 from sly.yacc import _decorator as _
 from miku_lexer import MikuLexer
 from miku_quadruple import Quadruple
+from miku_funcdir import *
+from miku_vardir import *
 #from miku_semanticcube import miku_semantic_cube as sm
 import re
 
@@ -10,6 +12,9 @@ class MikuParser(Parser):
     tokens = MikuLexer.tokens
     start = 'program'
     id = ''
+    #func_type = ''
+    funcdir = FuncDir()
+    vardir = VarDir()
 
     and_pattern = re.compile("^([A-Z][0-9]+)+$")
 
@@ -27,12 +32,17 @@ class MikuParser(Parser):
 
     temporal = 0
     paramCont = 0
+    pcont = 0
 
     # Grammar rules and actions
     @_('DRAWING ID \n declaration')
     def program(self, p):
         for i in self.quadruples:
             print(i)
+        print('#')
+        print(self.funcdir)
+        print('#')
+        print(self.vardir)
         return (self.quadruples)
 
     @_('var_declaration func_declaration main')
@@ -51,15 +61,20 @@ class MikuParser(Parser):
     def var_type(self, p):
         return p[0]
 
-    @_('FUNC func_type ID fd1 OPEN_PTH parameter CLOSE_PTH \n stmnt END \n',
+    @_('FUNC func_type ID fd1 OPEN_PTH parameter CLOSE_PTH \n stmnt vd1 END \n',
        'empty')
     def func_declaration(self, p):
-        #print(f'func_declaration {p[0]}')
-        return p[0]
-
+        self.funcdir.add_func(p.ID, p.func_type, 'varc', self.pcont, 'vart', 'var')
+      
     @_('')
     def fd1(self, p):
       self.id = p[-1]
+
+    @_('')
+    def vd1(self, p):
+        # Al ultimo entry de self.funcdir setea cosa.var = vardir
+      
+      return p[-1]
 
     @_('VOID', 'NUMBER', 'WORD', 'BOOL')
     def func_type(self, p):
@@ -68,7 +83,7 @@ class MikuParser(Parser):
 
     @_('var_type ID multiple_parameters', 'empty')
     def parameter(self, p):
-        #print(f'parameter {p[0]}')
+        self.pcont = self.pcont + 1
         return p[0]
 
     @_('COMMA parameter', 'empty')
@@ -289,6 +304,7 @@ class MikuParser(Parser):
 
     @_('ID array')
     def variable(self, p):
+        self.vardir.add_var(p.ID, 1, 1, 1)  
         return p[0]
 
     @_('OPEN_SQR expression CLOSE_SQR matrix', 'empty')
