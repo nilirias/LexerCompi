@@ -1,0 +1,18 @@
+DRAWING test
+func number aaa (number y)
+    write(hola)
+end
+
+MAIN
+  number x
+  x = 8 * 3
+  n = a * c - 4
+
+  if x > 1
+    y(hola, aaaaaaaaaa)
+    x = 29
+  end
+
+  a = 1
+
+END
