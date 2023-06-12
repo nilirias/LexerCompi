@@ -24,6 +24,7 @@ class MikuParser(Parser):
     operadores = []
     returnquad = []
     jump = []
+    jump2 = []
 
     temporal = 0
     paramCont = 0
@@ -33,6 +34,7 @@ class MikuParser(Parser):
     def program(self, p):
         for i in self.quadruples:
             print(i)
+        return (self.quadruples)
 
     @_('var_declaration func_declaration main')
     def declaration(self, p):
@@ -172,8 +174,6 @@ class MikuParser(Parser):
 
     @_('factor fact_op e2 expression q2', 'factor q2')
     def termino(self, p):
-        # if (len(self.operandos) == 0):
-        #     print('termino')
         return p[-1]
 
 #quads mult div
@@ -224,7 +224,6 @@ class MikuParser(Parser):
     def e1(self, p):
         if (p[-1] != None):
             self.operandos.append(p[-1])
-            #print("e1", self.operandos)
         else:
             pass
 
@@ -259,7 +258,6 @@ class MikuParser(Parser):
       self.myQuad = Quadruple(self.id, None, 'ERA', None)
       self.quadruples.append(self.myQuad)
       self.quadcount = self.quadcount + 1
-      #print(self.myQuad)
 
     @_('expression func2 multiple_fc_param')
     def func_call_param(self, p):
@@ -268,10 +266,9 @@ class MikuParser(Parser):
     @_('')
     def func2(self, p):
       self.paramCont = self.paramCont + 1
-      self.paramQuad = Quadruple(self.operandos.pop(), None, 'Parameter', self.paramCont)
+      self.paramQuad = Quadruple(self.operandos.pop(), None, 'PARAM', self.paramCont)
       self.quadruples.append(self.paramQuad)
       self.quadcount = self.quadcount + 1
-      #print(self.paramQuad)
 
     @_('')
     def func3(self, p):
@@ -325,10 +322,24 @@ class MikuParser(Parser):
       idx = self.returnquad.pop()
       self.quadruples[idx] = self.conQuad
 
-    @_('\n ELSE \n stmnt END \n', '\n END \n')
+    @_('\n ELSE if3 \n stmnt if4 END \n', '\n END \n')
     def else_stmnt(self, p):
         return p[0]
 
+    @_('')
+    def if3(self, p):
+        self.conQuad = Quadruple(None, None, 'gotov', None)
+        self.returnquad.append(len(self.quadruples))
+        self.quadruples.append(self.conQuad)
+      
+    @_('')
+    def if4(self, p):
+      self.jump2.append(self.quadcount-1)
+      self.operandos.append(self.temporal)
+      self.conQuad = Quadruple(self.operandos.pop(), None, 'gotov', self.jump2)
+      idx = self.returnquad.pop()
+      self.quadruples[idx] = self.conQuad
+  
     @_('WHILE con_expression \n stmnt \n END \n')
     def while_stmnt(self, p):
         return p[0]
@@ -382,8 +393,6 @@ class MikuParser(Parser):
     def empty(self, p):
         pass
 
-
-# Semantics
 
 if __name__ == '__main__':
     lexer = MikuLexer()
