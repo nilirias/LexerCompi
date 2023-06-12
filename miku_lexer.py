@@ -5,10 +5,10 @@ import re
 class MikuLexer(Lexer):
   reflags = re.IGNORECASE
   tokens = {
-    DRAWING, ID, NUMBER, CTE_NUM, WORD, CTE_STR, BOOL, READ, WRITE, IF, ELSE, WHILE, LEFT, RIGHT, FORWARD, CENTER, PEN_UP, PEN_DOWN, FUNC, SUM, SUB, MULT, DIV, TRUE, FALSE, ASSIGN, LESS_THAN, MORE_THAN, DIFFERENT_TO, LESS_OR_EQ_THAN, MORE_OR_EQ_THAN, EQUAL_TO, AND, OR, COMMA, END, OPEN_PTH, CLOSE_PTH, VOID, OPEN_SQR, CLOSE_SQR, MAIN
+    DRAWING, ID, NUMBER, CTE_NUM, WORD, CTE_STR, BOOL, READ, WRITE, IF, ELSE, WHILE, LEFT, RIGHT, FORWARD, CENTER, PEN_UP, PEN_DOWN, FUNC, SUM, SUB, MULT, DIV, TRUE, FALSE, ASSIGN, LESS_THAN, MORE_THAN, DIFFERENT_TO, LESS_OR_EQ_THAN, MORE_OR_EQ_THAN, EQUAL_TO, AND, OR, COMMA, END, OPEN_PTH, CLOSE_PTH, VOID, OPEN_SQR, CLOSE_SQR, MAIN, RETURN
   }
 
-  reserved_words = ['drawing', 'number', 'word', 'bool', 'read', 'write', 'if', 'else', 'while', 'left', 'right', 'forward', 'pen_up', 'pen_down', 'center', 'func', 'true', 'false', 'and', 'or', 'end', 'void', 'main']
+  reserved_words = ['drawing', 'number', 'word', 'bool', 'read', 'write', 'if', 'else', 'while', 'left', 'right', 'forward', 'pen_up', 'pen_down', 'center', 'func', 'true', 'false', 'and', 'or', 'end', 'void', 'main', 'return']
 
   ignore = ' \t'
   ignore_comment = r'#.*'

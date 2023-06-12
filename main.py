@@ -24,7 +24,6 @@ class MikuParser(Parser):
     operadores = []
     returnquad = []
     jump = []
-    jump2 = []
 
     temporal = 0
     paramCont = 0
@@ -79,10 +78,14 @@ class MikuParser(Parser):
 
     @_('var_assignation stmnt', 'func_call stmnt', 'read stmnt', 'write stmnt',
        'if_stmnt stmnt', 'while_stmnt stmnt', 'move_func stmnt',
-       'pen_func stmnt', 'var_declaration_func stmnt', 'empty')
+       'pen_func stmnt', 'var_declaration_func stmnt', 'returnf stmnt', 'empty')
     def stmnt(self, p):
         ##print(f'stmnt {p[0]}')
         return p[0]
+
+    @_('RETURN expression')
+    def returnf(self, p):
+      return p[0]
 
     @_('var_type ID multiple_vars \n')
     def var_declaration_func(self, p):
@@ -318,7 +321,7 @@ class MikuParser(Parser):
     def if2(self, p):
       self.jump.append(self.quadcount-1)
       self.operandos.append(self.temporal)
-      self.conQuad = Quadruple(self.operandos.pop(), None, 'gotof', self.jump)
+      self.conQuad = Quadruple(self.operandos.pop(), None, 'gotof', self.jump.pop())
       idx = self.returnquad.pop()
       self.quadruples[idx] = self.conQuad
 
@@ -331,19 +334,42 @@ class MikuParser(Parser):
         self.conQuad = Quadruple(None, None, 'gotov', None)
         self.returnquad.append(len(self.quadruples))
         self.quadruples.append(self.conQuad)
+        print(f'if3 {self.conQuad}')
       
     @_('')
     def if4(self, p):
-      self.jump2.append(self.quadcount-1)
+      self.jump.append(self.quadcount-1)
       self.operandos.append(self.temporal)
-      self.conQuad = Quadruple(self.operandos.pop(), None, 'gotov', self.jump2)
+      self.conQuad = Quadruple(self.operandos.pop(), None, 'gotov', self.jump.pop())
       idx = self.returnquad.pop()
       self.quadruples[idx] = self.conQuad
   
-    @_('WHILE con_expression \n stmnt \n END \n')
+    @_('WHILE w1 con_expression w2 \n stmnt \n w3 END \n')
     def while_stmnt(self, p):
         return p[0]
 
+    @_('')
+    def w1(self, p):
+      self.jump.append(self.quadcount)
+      print(self.jump)
+
+    @_('')
+    def w2(self, p):
+      self.myQuad = Quadruple(self.operandos.pop(), None, 'gotof', None) 
+      self.returnquad.append(len(self.quadruples))
+      self.quadruples.append(self.myQuad)
+      self.jump.append(self.quadcount-1)
+
+    @_('')
+    def w3(self, p):
+      self.jump.append(self.quadcount-1)
+      self.operandos.append(self.temporal)
+      self.conQuad = Quadruple(self.operandos.pop(), None, 'gotof', self.jump.pop())
+      idx = self.returnquad.pop()
+      self.quadruples[idx] = self.conQuad
+      self.conQuad = Quadruple(None, None, 'gotot', self.jump.pop())
+      self.quadruples.append(self.conQuad)
+  
     @_('expression q5 log_op e7 expression q5', 'expression q5')
     def con_expression(self, p):
         ##print(f'con_expression {p[-1]}')
