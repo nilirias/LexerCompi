@@ -1,12 +1,21 @@
 DRAWING test
+number f, g
+word h
+number o, p, q
+bool flag, ola, adios
 
 func number fibonacci(number n)
+  number x, t
+  word a
   if(n < 2)
     return n
   else
     return fibonacci(n - 1) + fibonacci(n - 2)
   end
+    x = 1
+    word b, r
 end
 
 MAIN
+  number z
 END

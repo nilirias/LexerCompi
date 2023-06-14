@@ -12,7 +12,11 @@ class MikuParser(Parser):
     tokens = MikuLexer.tokens
     start = 'program'
     id = ''
-    #func_type = ''
+    varidd = ''
+    funcid = ''
+    functype = ''
+    vartype = ''
+    
     funcdir = FuncDir()
     vardir = VarDir()
 
@@ -33,27 +37,71 @@ class MikuParser(Parser):
     temporal = 0
     paramCont = 0
     pcont = 0
+    dir = 0
+
+    numglb = 0
+    wordglb = 500
+    boolglb = 1000
+
+    numlcl = 1500
+    wordlcl = 2000
+    boollcl = 2500
+
+    numtemp = 3000
+    wordtemp = 3500
+    booltemp = 4000
+
+    numcte = 4500
+    wordcte = 5000
+    boolcte = 5500
 
     # Grammar rules and actions
-    @_('DRAWING ID \n declaration')
+    @_('DRAWING ID fd1 \n declaration')
     def program(self, p):
-        for i in self.quadruples:
-            print(i)
-        print('#')
+        # for i in self.quadruples:
+        #     print(i)
+        print('# function directory #')
         print(self.funcdir)
-        print('#')
+        print('# var directory #')
         print(self.vardir)
-        return (self.quadruples)
+        return (self.quadruples, self.funcdir)
 
-    @_('var_declaration func_declaration main')
+    @_('var_declaration vd1 func_declaration main')
     def declaration(self, p):
         return p[0]
 
-    @_('var_type ID multiple_var \n', 'empty')
+    @_('var_type addvartype ID varglobal multiple_var \n var_declaration', 'empty')
     def var_declaration(self, p):
+        #print(f'oooooooooooooooooooo {self.varidd}')
         return p[0]
 
-    @_('COMMA ID multiple_var', 'empty')
+    @_('')
+    def varglobal(self, p):
+      #self.varidd = p[-1] #variable name
+      print(self.vartype)
+      if (self.vartype == 'number'):
+        self.dir = self.numglb
+        self.numglb = self.numglb + 1
+        
+      if (self.vartype == 'word'):
+        self.dir = self.wordglb
+        self.wordglb = self.wordglb + 1.
+        
+      if (self.vartype == 'bool'):
+        self.dir = self.boolglb
+        self.boolglb = self.boolglb + 1
+        
+      self.vardir.add_var(p[-1], self.dir)
+      
+    @_('')
+    def addvartype(self, p):
+      self.vartype = p[-1]
+      
+    @_('')
+    def addvardic(self, p):
+      self.vardir.add_var(p[-1], 1, 1, 1)
+
+    @_('COMMA ID varglobal multiple_var', 'empty')
     def multiple_var(self, p):
         return p[0]
 
@@ -61,29 +109,38 @@ class MikuParser(Parser):
     def var_type(self, p):
         return p[0]
 
-    @_('FUNC func_type ID fd1 OPEN_PTH parameter CLOSE_PTH \n stmnt vd1 END \n',
+    @_('FUNC resetvars func_type ID fd1 OPEN_PTH parameter CLOSE_PTH \n stmnt vd1 END \n',
        'empty')
     def func_declaration(self, p):
-        self.funcdir.add_func(p.ID, p.func_type, 'varc', self.pcont, 'vart', 'var')
-      
+        return p[-1]
+
+    @_('')
+    def resetvars(self, p):
+      self.numlcl = 1500
+      self.wordlcl = 2000
+      self.boollcl = 2500
+    # function id
     @_('')
     def fd1(self, p):
-      self.id = p[-1]
+      self.funcid = p[-1]
+      #print(self.funcid)
 
+    # es agregar las variables a la tabla de variables de una funcion
     @_('')
     def vd1(self, p):
-        # Al ultimo entry de self.funcdir setea cosa.var = vardir
-      
-      return p[-1]
-
+        self.funcdir.add_func(self.funcid, self.functype, 'varc', self.pcont, 'vart', self.vardir)
+        self.vardir = VarDir()
+        return p[-1]
+  
     @_('VOID', 'NUMBER', 'WORD', 'BOOL')
     def func_type(self, p):
-        #print(f'func_type {p[0]}')
-        return p[0]
+        self.functype = p[-1]
+        #return p[0]
 
-    @_('var_type ID multiple_parameters', 'empty')
+    @_('var_type addvartype ID varid multiple_parameters', 'empty')
     def parameter(self, p):
         self.pcont = self.pcont + 1
+        #print(f'eeeeeeeeeeeeeeeee {self.varidd}')
         return p[0]
 
     @_('COMMA parameter', 'empty')
@@ -102,9 +159,28 @@ class MikuParser(Parser):
     def returnf(self, p):
       return p[0]
 
-    @_('var_type ID multiple_vars \n')
+    @_('var_type addvartype ID varid multiple_vars \n')
     def var_declaration_func(self, p):
+        #print(f'uuuuuuuuuuuuuuuuuuuu {self.varidd}')
         return p[0]
+      
+    @_('')
+    def varid(self, p):
+      #self.varidd = p[-1] #variable name
+      #print(self.vartype)
+      if (self.vartype == 'number'):
+        self.dir = self.numlcl
+        self.numlcl = self.numlcl + 1
+        
+      if (self.vartype == 'word'):
+        self.dir = self.wordlcl
+        self.wordlcl = self.wordlcl + 1.
+        
+      if (self.vartype == 'bool'):
+        self.dir = self.boollcl
+        self.boollcl = self.boollcl + 1
+        
+      self.vardir.add_var(p[-1], self.dir)
 
     @_('ID e5 assign e6 expression q3 \n')
     def var_assignation(self, p):
@@ -304,7 +380,8 @@ class MikuParser(Parser):
 
     @_('ID array')
     def variable(self, p):
-        self.vardir.add_var(p.ID, 1, 1, 1)  
+        #print(f'322 {self.vardir}')
+        #print(f'after {self.vardir} {p.ID}')
         return p[0]
 
     @_('OPEN_SQR expression CLOSE_SQR matrix', 'empty')
@@ -315,7 +392,7 @@ class MikuParser(Parser):
     def matrix(self, p):
         return p[0]
 
-    @_('COMMA variable', 'empty')
+    @_('COMMA variable varid', 'empty')
     def multiple_vars(self, p):
         return p[0]
 
@@ -350,7 +427,7 @@ class MikuParser(Parser):
         self.conQuad = Quadruple(None, None, 'gotov', None)
         self.returnquad.append(len(self.quadruples))
         self.quadruples.append(self.conQuad)
-        print(f'if3 {self.conQuad}')
+        #print(f'if3 {self.conQuad}')
       
     @_('')
     def if4(self, p):
@@ -367,7 +444,7 @@ class MikuParser(Parser):
     @_('')
     def w1(self, p):
       self.jump.append(self.quadcount)
-      print(self.jump)
+      #print(self.jump)
 
     @_('')
     def w2(self, p):
@@ -425,8 +502,16 @@ class MikuParser(Parser):
     def pen_func(self, p):
         return p[0]
         #print(f'pen_func {p[0]}')
-
-    @_('MAIN \n stmnt END')
+    
+    @_('')
+    def md1(self, p):
+        # Al ultimo entry de self.funcdir setea el .var = vardir
+        self.funcdir.add_func(self.funcid, self.functype, 'varc', self.pcont, 'vart', self.vardir)
+        print(f'ffff {self.vardir}')
+        self.vardir = VarDir()
+        return p[-1]
+      
+    @_('MAIN fd1 resetvars \n stmnt vd1 END')
     def main(self, p):
         return p[0]
         #print(f'main {p[0]}')
