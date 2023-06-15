@@ -19,7 +19,7 @@ def parse_func_dir(func_dir, outfile):
 if __name__ == '__main__':
   lexer = MikuLexer()
   parser = MikuParser()
-  filename = 'test_assign.txt'
+  filename = 'test_modulos.txt'
 
   if(len(sys.argv) > 1):
       filename = sys.argv[1]
@@ -29,12 +29,17 @@ if __name__ == '__main__':
           program_name, quads = parser.parse(
               lexer.tokenize(fp.read()))
           outfile = open(program_name + '.miku', 'w')
+          print(program_name)
           # parse_func_dir(func_dir, outfile)
           # outfile.write('#\n')
           # parse_constant_table(constant_table, outfile)
           # outfile.write('#\n')
+          print('---------------')
           for quad in quads:
+              print(str(quad))
               outfile.write(str(quad) + '\n')
           print('Code compiled successfully to', program_name + '.miku')
       except EOFError:
           pass
+      finally:
+          outfile.close()

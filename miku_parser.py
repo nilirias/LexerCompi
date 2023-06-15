@@ -69,7 +69,7 @@ class MikuParser(Parser):
         # print('# var directory #')
         # print(self.vardir)
 
-        return ('ola', self.quadruples)
+        return (self.funcid, self.quadruples)
 
     @_('var_declaration vd1 func_declaration main')
     def declaration(self, p):
