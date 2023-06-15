@@ -1,5 +1,6 @@
 DRAWING test
 MAIN
+  number a, b, c, d
   if a + b > c * d
     a = b + d
   else

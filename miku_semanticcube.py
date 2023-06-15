@@ -20,14 +20,16 @@ def checkRel(type1, type2, operator):
 def checkLog(type1, type2, operator):
   if type1 == 'bool' and type2 == 'bool':
     return 'bool'
+  if type1 == 'number' and type2 == 'number':
+    return 'bool'
 
 def checkEq(type1, type2, operator):
   if type1 == type2:
-    return type1
+    return 'bool'
 
 def checkAss(type1, type2, operator):
-  if type1 == 'word' and type2 == 'number':
-    return 'word'
+  if type1 == type2:
+    return type1
 
 def checkOperator(type1, type2, operator):
   if operator in art_ops:

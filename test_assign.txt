@@ -1,8 +1,14 @@
 DRAWING test
 
+func number x(number a)
+  a = 3
+end
+
+func number z(number b)
+  b = 2
+end
+
 MAIN
-  number x, y, z
-  x = 1
-  y = 2
-  z = x 
+  number y
+  y = 1 + 2 - 3
 END
