@@ -4,7 +4,7 @@ log_ops = ['and', 'or']
 eq_ops = ['<>', '==']
 
 def checkArt(type1, type2, operator):
-    if (operator == '+' or operator == '-' or operator == '*') and type1 == 'number' and type2 == 'number':
+    if (operator == '+' or operator == '-' or operator == '*' or operator == '/') and type1 == 'number' and type2 == 'number':
         return 'number'
     if type1 == 'word' and type2 == 'word' and operator == '+':
         return 'word'
@@ -26,7 +26,7 @@ def checkEq(type1, type2, operator):
     return type1
 
 def checkAss(type1, type2, operator):
-  if type1 == 'word' and type2 == 'number'
+  if type1 == 'word' and type2 == 'number':
     return 'word'
 
 def checkOperator(type1, type2, operator):
@@ -34,9 +34,9 @@ def checkOperator(type1, type2, operator):
     return checkArt(type1, type2, operator)
   if operator in rel_ops:
     return checkRel(type1, type2, operator)
-  if operator log_ops:
+  if operator in log_ops:
     return checkLog(type1, type2, operator)
-  if operator eq_ops:
+  if operator in eq_ops:
     return checkEq(type1, type2, operator)
   if operator == '=':
     return checkAss(type1, type2, operator)

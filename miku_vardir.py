@@ -8,7 +8,11 @@ class VarDir:
 
     def var_count(self):
         return len(self.vars)
-  
+
+    def get_var_address(self, name):
+        print('gva',name,self.vars)
+        return [var.addr for var in self.vars if var.name == name][0]
+
     def __str__(self):
             return '\n'.join(str(i) for i in self.vars)
 

@@ -4,7 +4,7 @@ from miku_lexer import MikuLexer
 from miku_quadruple import Quadruple
 from miku_funcdir import *
 from miku_vardir import *
-#from miku_semanticcube import miku_semantic_cube as sm
+from miku_semanticcube import checkOperator
 import re
 
 class MikuParser(Parser):
@@ -16,14 +16,18 @@ class MikuParser(Parser):
     funcid = ''
     functype = ''
     vartype = ''
+    operador = ''
     
     funcdir = FuncDir()
     vardir = VarDir()
 
-    and_pattern = re.compile("^([A-Z][0-9]+)+$")
-
     quadruples = []
     quadcount = 1
+
+    lotype = ''
+    rotype = ''
+
+    tipotemp = ''
 
     myQuad = Quadruple(0, 0, 0, 0)
     conQuad = Quadruple(0, 0, 0, 0) 
@@ -171,14 +175,17 @@ class MikuParser(Parser):
       if (self.vartype == 'number'):
         self.dir = self.numlcl
         self.numlcl = self.numlcl + 1
+        print(p[-1], self.numlcl)
         
       if (self.vartype == 'word'):
         self.dir = self.wordlcl
-        self.wordlcl = self.wordlcl + 1.
+        self.wordlcl = self.wordlcl + 1
+        print(p[-1], self.wordlcl)
         
       if (self.vartype == 'bool'):
         self.dir = self.boollcl
         self.boollcl = self.boollcl + 1
+        print(p[-1], self.boollcl)
         
       self.vardir.add_var(p[-1], self.dir)
 
@@ -200,15 +207,33 @@ class MikuParser(Parser):
     def assign(self, p):
         return p[0]
 
-    @_('variable', 'CTE_NUM', 'CTE_STR', 'cte_bool', 'func_call')
+    @_('variable', 'CTE_NUM nvarcte', 'CTE_STR svarcte', 'cte_bool bvarcte', 'func_call')
     def var_cte(self, p):
         return p[0]
+
+    @_('')
+    def nvarcte(self, p):
+      self.dir = self.numcte
+      self.numcte = self.numcte + 1
+      self.vardir.add_var(p[-1], self.dir)
+
+    @_('')
+    def svarcte(self, p):
+      self.dir = self.wordcte
+      self.wordcte = self.wordcte + 1
+      self.vardir.add_var(p[-1], self.dir)
+
+    @_('')
+    def bvarcte(self, p):
+      self.dir = self.boolcte
+      self.boolcte = self.boolcte + 1
+      self.vardir.add_var(p[-1], self.dir)
 
     @_('TRUE', 'FALSE')
     def cte_bool(self, p):
         return p[0]
 
-    @_('exp rel_op exp q4', 'exp q4')
+    @_('exp rel_op exp q4', 'exp q4', 'func_call q4')
     def expression(self, p):
         return p[-1]
 
@@ -228,12 +253,6 @@ class MikuParser(Parser):
             else:
                 self.operadores.append(op)
                 return
-
-    #Punto neuralgico para expression
-    @_('')
-    def e4(self, p):
-        self.operadores.append(p[-1])
-        self.operadores.append('tururururu')
 
     @_('termino term_op e3 termino q1', 'termino q1')
     def exp(self, p):
@@ -255,7 +274,29 @@ class MikuParser(Parser):
                 ro = self.operandos.pop()
                 self.temporal = self.temporal + 1
                 self.operandos.append(self.temporal)
-                myQuad = Quadruple(lo, ro, op, self.temporal)
+                if ((self.vardir.get_var_address(lo) >= 0 and self.vardir.get_var_address(lo) < 500) or (self.vardir.get_var_address(lo) >= 1500 and self.vardir.get_var_address(lo) < 2000) or (self.vardir.get_var_address(lo) >= 3000 and self.vardir.get_var_address(lo) < 3500) or (self.vardir.get_var_address(lo) >= 4500 and self.vardir.get_var_address(lo) < 5000)):
+                  lotype = 'number'
+                elif ((self.vardir.get_var_address(lo) >= 500 and self.vardir.get_var_address(lo) < 1000) or (self.vardir.get_var_address(lo) >= 2000 and self.vardir.get_var_address(lo) < 2500) or (self.vardir.get_var_address(lo) >= 3500 and self.vardir.get_var_address(lo) < 4000) or (self.vardir.get_var_address(lo) >= 5000 and self.vardir.get_var_address(lo) < 5500)):
+                  lotype = 'word'
+                else:
+                  lotype = 'bool'
+                  
+                if ((self.vardir.get_var_address(ro) >= 0 and self.vardir.get_var_address(ro) < 500) or (self.vardir.get_var_address(ro) >= 1500 and self.vardir.get_var_address(ro) < 2000) or (self.vardir.get_var_address(ro) >= 3000 and self.vardir.get_var_address(ro) < 3500) or (self.vardir.get_var_address(ro) >= 4500 and self.vardir.get_var_address(ro) < 5000)):
+                  rotype = 'number'
+                elif ((self.vardir.get_var_address(ro) >= 500 and self.vardir.get_var_address(ro) < 1000) or (self.vardir.get_var_address(ro) >= 2000 and self.vardir.get_var_address(ro) < 2500) or (self.vardir.get_var_address(ro) >= 3500 and self.vardir.get_var_address(ro) < 4000) or (self.vardir.get_var_address(ro) >= 5000 and self.vardir.get_var_address(ro) < 5500)):
+                  rotype = 'word'
+                else:
+                  rotype = 'bool'
+                print(rotype, lotype, op)
+                tipotemp = checkOperator(rotype, lotype, op)
+                if(tipotemp == 'number'):
+                  myQuad = Quadruple(lo, ro, op, self.numtemp)
+                  self.numtemp = self.numtemp + 1
+                elif(tipotemp == 'word'):
+                  myQuad = Quadruple(lo, ro, op, self.wordtemp)
+                  self.wordtemp = self.wordtemp + 1
+                elif(tipotemp == 'bool'):
+                  self.booltemp = self.booltemp + 1
                 self.quadruples.append(myQuad)
                 self.quadcount = self.quadcount + 1
             else:
@@ -266,7 +307,7 @@ class MikuParser(Parser):
     def term_op(self, p):
         return p[-1]
 
-    @_('factor fact_op e2 expression q2', 'factor q2')
+    @_('factor fact_op e2 factor q2', 'factor q2')
     def termino(self, p):
         return p[-1]
 
@@ -280,6 +321,22 @@ class MikuParser(Parser):
                 ro = self.operandos.pop()
                 self.temporal = self.temporal + 1
                 self.operandos.append(self.temporal)
+                if ((self.vardir.get_var_address(lo) >= 0 and self.vardir.get_var_address(lo) < 500) or (self.vardir.get_var_address(lo) >= 1500 and self.vardir.get_var_address(lo) < 2000) or (self.vardir.get_var_address(lo) >= 3000 and self.vardir.get_var_address(lo) < 3500) or (self.vardir.get_var_address(lo) >= 4500 and self.vardir.get_var_address(lo) < 5000)):
+                  lotype = 'number'
+                elif ((self.vardir.get_var_address(lo) >= 500 and self.vardir.get_var_address(lo) < 1000) or (self.vardir.get_var_address(lo) >= 2000 and self.vardir.get_var_address(lo) < 2500) or (self.vardir.get_var_address(lo) >= 3500 and self.vardir.get_var_address(lo) < 4000) or (self.vardir.get_var_address(lo) >= 5000 and self.vardir.get_var_address(lo) < 5500)):
+                  lotype = 'word'
+                else:
+                  lotype = 'bool'
+                  
+                if ((self.vardir.get_var_address(ro) >= 0 and self.vardir.get_var_address(ro) < 500) or (self.vardir.get_var_address(ro) >= 1500 and self.vardir.get_var_address(ro) < 2000) or (self.vardir.get_var_address(ro) >= 3000 and self.vardir.get_var_address(ro) < 3500) or (self.vardir.get_var_address(ro) >= 4500 and self.vardir.get_var_address(ro) < 5000)):
+                  rotype = 'number'
+                elif ((self.vardir.get_var_address(ro) >= 500 and self.vardir.get_var_address(ro) < 1000) or (self.vardir.get_var_address(ro) >= 2000 and self.vardir.get_var_address(ro) < 2500) or (self.vardir.get_var_address(ro) >= 3500 and self.vardir.get_var_address(ro) < 4000) or (self.vardir.get_var_address(ro) >= 5000 and self.vardir.get_var_address(ro) < 5500)):
+                  rotype = 'word'
+                else:
+                  rotype = 'bool'
+                print(rotype, lotype, op)
+                print(checkOperator(rotype, lotype, op))
+                checkOperator(rotype, lotype, op)
                 myQuad = Quadruple(lo, ro, op, self.temporal)
                 self.quadruples.append(myQuad)
                 self.quadcount = self.quadcount + 1
@@ -309,7 +366,7 @@ class MikuParser(Parser):
     def fact_op(self, p):
         return p[0]
 
-    @_('open_pth expression close_pth', 'var_cte e1')
+    @_('open_pth expression close_pth', 'var_cte e1', 'expression')
     def factor(self, p):
         return p[-1]
 
@@ -392,7 +449,7 @@ class MikuParser(Parser):
     def matrix(self, p):
         return p[0]
 
-    @_('COMMA variable varid', 'empty')
+    @_('COMMA variable varid multiple_vars', 'empty')
     def multiple_vars(self, p):
         return p[0]
 
@@ -524,7 +581,7 @@ class MikuParser(Parser):
 if __name__ == '__main__':
     lexer = MikuLexer()
     parser = MikuParser()
-    filename = 'test_modulos.txt'
+    filename = 'test_assign.txt'
 
     with open(filename) as fp:
         try:
