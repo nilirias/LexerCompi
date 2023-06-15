@@ -7,15 +7,15 @@ Rule 3     var_declaration -> empty
 Rule 4     var_declaration -> var_type addvartype ID varglobal multiple_var var_declaration
 Rule 5     varglobal -> <empty>
 Rule 6     addvartype -> <empty>
-Rule 7     addvardic -> <empty>
-Rule 8     multiple_var -> empty
-Rule 9     multiple_var -> COMMA ID varglobal multiple_var
-Rule 10    var_type -> BOOL
-Rule 11    var_type -> WORD
-Rule 12    var_type -> NUMBER
-Rule 13    func_declaration -> empty
-Rule 14    func_declaration -> FUNC resetvars func_type ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 END
-Rule 15    resetvars -> <empty>
+Rule 7     multiple_var -> empty
+Rule 8     multiple_var -> COMMA ID varglobal multiple_var
+Rule 9     var_type -> BOOL
+Rule 10    var_type -> WORD
+Rule 11    var_type -> NUMBER
+Rule 12    func_declaration -> empty
+Rule 13    func_declaration -> FUNC resetvars func_type ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 END
+Rule 14    resetvars -> <empty>
+Rule 15    resettemp -> <empty>
 Rule 16    fd1 -> <empty>
 Rule 17    vd1 -> <empty>
 Rule 18    func_type -> BOOL
@@ -123,41 +123,40 @@ Rule 119   move_type -> RIGHT
 Rule 120   move_type -> LEFT
 Rule 121   pen_func -> PEN_DOWN OPEN_PTH CLOSE_PTH
 Rule 122   pen_func -> PEN_UP OPEN_PTH CLOSE_PTH
-Rule 123   md1 -> <empty>
-Rule 124   main -> MAIN fd1 resetvars stmnt vd1 END
-Rule 125   empty -> <empty>
+Rule 123   main -> MAIN fd1 resetvars stmnt vd1 END
+Rule 124   empty -> <empty>
 
 Terminals, with rules where they appear:
 
 AND                  : 78
 ASSIGN               : 43
-BOOL                 : 10 18
+BOOL                 : 9 18
 CENTER               : 117
-CLOSE_PTH            : 14 76 85 92 100 116 121 122
+CLOSE_PTH            : 13 76 85 92 100 116 121 122
 CLOSE_SQR            : 95 97
-COMMA                : 9 25 91 99
+COMMA                : 8 25 91 99
 CTE_NUM              : 47
 CTE_STR              : 46
 DIFFERENT_TO         : 82
 DIV                  : 69
 DRAWING              : 1
 ELSE                 : 105
-END                  : 14 104 105 108 124
+END                  : 13 104 105 108 123
 EQUAL_TO             : 79
 FALSE                : 52
 FORWARD              : 118
-FUNC                 : 14
-ID                   : 1 4 9 14 23 38 40 85 93
+FUNC                 : 13
+ID                   : 1 4 8 13 23 38 40 85 93
 IF                   : 101
 LEFT                 : 120
 LESS_OR_EQ_THAN      : 81
 LESS_THAN            : 84
-MAIN                 : 124
+MAIN                 : 123
 MORE_OR_EQ_THAN      : 80
 MORE_THAN            : 83
 MULT                 : 70
-NUMBER               : 12 20
-OPEN_PTH             : 14 75 85 92 100 116 121 122
+NUMBER               : 11 20
+OPEN_PTH             : 13 75 85 92 100 116 121 122
 OPEN_SQR             : 95 97
 OR                   : 77
 PEN_DOWN             : 121
@@ -170,13 +169,12 @@ SUM                  : 63
 TRUE                 : 53
 VOID                 : 21
 WHILE                : 108
-WORD                 : 11 19
+WORD                 : 10 19
 WRITE                : 100
 error                : 
 
 Nonterminals, with rules where they appear:
 
-addvardic            : 
 addvartype           : 4 23 38
 array                : 93
 assign               : 40
@@ -192,19 +190,19 @@ e5                   : 40
 e6                   : 40
 e7                   : 113
 else_stmnt           : 101
-empty                : 3 8 13 22 24 26 90 94 96 98
+empty                : 3 7 12 22 24 26 90 94 96 98
 exp                  : 55 56 56
 expression           : 37 40 71 73 87 95 97 100 112 113 113
 fact_op              : 65
 factor               : 64 65 65
-fd1                  : 1 14 124
+fd1                  : 1 13 123
 func1                : 85
 func2                : 87
 func3                : 85
 func_call            : 35 44 54
 func_call_param      : 85 91 116
 func_declaration     : 2
-func_type            : 14
+func_type            : 13
 if1                  : 101
 if2                  : 101
 if3                  : 105
@@ -213,16 +211,15 @@ if_stmnt             : 32
 log_op               : 113
 main                 : 2
 matrix               : 95
-md1                  : 
 move_func            : 30
 move_type            : 116
 multiple_fc_param    : 87
 multiple_parameters  : 23
-multiple_var         : 4 9
+multiple_var         : 4 8
 multiple_vars        : 38 92 99
 nvarcte              : 47
 open_pth             : 73
-parameter            : 14 25
+parameter            : 13 25
 pen_func             : 29
 program              : 0
 q1                   : 58 59
@@ -232,9 +229,10 @@ q4                   : 54 55 56
 q5                   : 112 113 113
 read                 : 34
 rel_op               : 56
-resetvars            : 14 124
+resettemp            : 
+resetvars            : 13 123
 returnf              : 27
-stmnt                : 14 27 28 29 30 31 32 33 34 35 36 101 105 108 124
+stmnt                : 13 27 28 29 30 31 32 33 34 35 36 101 105 108 123
 svarcte              : 46
 term_op              : 59
 termino              : 58 59 59
@@ -243,10 +241,10 @@ var_cte              : 72
 var_declaration      : 2 4
 var_declaration_func : 28
 var_type             : 4 23 38
-varglobal            : 4 9
+varglobal            : 4 8
 variable             : 48 92 99
 varid                : 23 38 99
-vd1                  : 2 14 124
+vd1                  : 2 13 123
 w1                   : 108
 w2                   : 108
 w3                   : 108
@@ -291,12 +289,12 @@ state 4
     (2) declaration -> . var_declaration vd1 func_declaration main
     (3) var_declaration -> . empty
     (4) var_declaration -> . var_type addvartype ID varglobal multiple_var var_declaration
-    (125) empty -> .
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
-    FUNC            reduce using rule 125 (empty -> .)
-    MAIN            reduce using rule 125 (empty -> .)
+    (124) empty -> .
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
+    FUNC            reduce using rule 124 (empty -> .)
+    MAIN            reduce using rule 124 (empty -> .)
     BOOL            shift and go to state 9
     WORD            shift and go to state 10
     NUMBER          shift and go to state 11
@@ -338,30 +336,30 @@ state 8
 
 state 9
 
-    (10) var_type -> BOOL .
-    ID              reduce using rule 10 (var_type -> BOOL .)
+    (9) var_type -> BOOL .
+    ID              reduce using rule 9 (var_type -> BOOL .)
 
 
 state 10
 
-    (11) var_type -> WORD .
-    ID              reduce using rule 11 (var_type -> WORD .)
+    (10) var_type -> WORD .
+    ID              reduce using rule 10 (var_type -> WORD .)
 
 
 state 11
 
-    (12) var_type -> NUMBER .
-    ID              reduce using rule 12 (var_type -> NUMBER .)
+    (11) var_type -> NUMBER .
+    ID              reduce using rule 11 (var_type -> NUMBER .)
 
 
 state 12
 
     (2) declaration -> var_declaration vd1 . func_declaration main
-    (13) func_declaration -> . empty
-    (14) func_declaration -> . FUNC resetvars func_type ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 END
-    (125) empty -> .
+    (12) func_declaration -> . empty
+    (13) func_declaration -> . FUNC resetvars func_type ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 END
+    (124) empty -> .
     FUNC            shift and go to state 16
-    MAIN            reduce using rule 125 (empty -> .)
+    MAIN            reduce using rule 124 (empty -> .)
 
     func_declaration               shift and go to state 14
     empty                          shift and go to state 15
@@ -375,25 +373,25 @@ state 13
 state 14
 
     (2) declaration -> var_declaration vd1 func_declaration . main
-    (124) main -> . MAIN fd1 resetvars stmnt vd1 END
+    (123) main -> . MAIN fd1 resetvars stmnt vd1 END
     MAIN            shift and go to state 19
 
     main                           shift and go to state 18
 
 state 15
 
-    (13) func_declaration -> empty .
-    MAIN            reduce using rule 13 (func_declaration -> empty .)
+    (12) func_declaration -> empty .
+    MAIN            reduce using rule 12 (func_declaration -> empty .)
 
 
 state 16
 
-    (14) func_declaration -> FUNC . resetvars func_type ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 END
-    (15) resetvars -> .
-    BOOL            reduce using rule 15 (resetvars -> .)
-    WORD            reduce using rule 15 (resetvars -> .)
-    NUMBER          reduce using rule 15 (resetvars -> .)
-    VOID            reduce using rule 15 (resetvars -> .)
+    (13) func_declaration -> FUNC . resetvars func_type ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 END
+    (14) resetvars -> .
+    BOOL            reduce using rule 14 (resetvars -> .)
+    WORD            reduce using rule 14 (resetvars -> .)
+    NUMBER          reduce using rule 14 (resetvars -> .)
+    VOID            reduce using rule 14 (resetvars -> .)
 
     resetvars                      shift and go to state 20
 
@@ -418,7 +416,7 @@ state 18
 
 state 19
 
-    (124) main -> MAIN . fd1 resetvars stmnt vd1 END
+    (123) main -> MAIN . fd1 resetvars stmnt vd1 END
     (16) fd1 -> .
     RETURN          reduce using rule 16 (fd1 -> .)
     PEN_DOWN        reduce using rule 16 (fd1 -> .)
@@ -441,7 +439,7 @@ state 19
 
 state 20
 
-    (14) func_declaration -> FUNC resetvars . func_type ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 END
+    (13) func_declaration -> FUNC resetvars . func_type ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 END
     (18) func_type -> . BOOL
     (19) func_type -> . WORD
     (20) func_type -> . NUMBER
@@ -456,45 +454,45 @@ state 20
 state 21
 
     (4) var_declaration -> var_type addvartype ID varglobal . multiple_var var_declaration
-    (8) multiple_var -> . empty
-    (9) multiple_var -> . COMMA ID varglobal multiple_var
-    (125) empty -> .
+    (7) multiple_var -> . empty
+    (8) multiple_var -> . COMMA ID varglobal multiple_var
+    (124) empty -> .
     COMMA           shift and go to state 30
-    BOOL            reduce using rule 125 (empty -> .)
-    WORD            reduce using rule 125 (empty -> .)
-    NUMBER          reduce using rule 125 (empty -> .)
-    FUNC            reduce using rule 125 (empty -> .)
-    MAIN            reduce using rule 125 (empty -> .)
+    BOOL            reduce using rule 124 (empty -> .)
+    WORD            reduce using rule 124 (empty -> .)
+    NUMBER          reduce using rule 124 (empty -> .)
+    FUNC            reduce using rule 124 (empty -> .)
+    MAIN            reduce using rule 124 (empty -> .)
 
     multiple_var                   shift and go to state 28
     empty                          shift and go to state 29
 
 state 22
 
-    (124) main -> MAIN fd1 . resetvars stmnt vd1 END
-    (15) resetvars -> .
-    RETURN          reduce using rule 15 (resetvars -> .)
-    PEN_DOWN        reduce using rule 15 (resetvars -> .)
-    PEN_UP          reduce using rule 15 (resetvars -> .)
-    WHILE           reduce using rule 15 (resetvars -> .)
-    IF              reduce using rule 15 (resetvars -> .)
-    WRITE           reduce using rule 15 (resetvars -> .)
-    READ            reduce using rule 15 (resetvars -> .)
-    ID              reduce using rule 15 (resetvars -> .)
-    BOOL            reduce using rule 15 (resetvars -> .)
-    WORD            reduce using rule 15 (resetvars -> .)
-    NUMBER          reduce using rule 15 (resetvars -> .)
-    CENTER          reduce using rule 15 (resetvars -> .)
-    FORWARD         reduce using rule 15 (resetvars -> .)
-    RIGHT           reduce using rule 15 (resetvars -> .)
-    LEFT            reduce using rule 15 (resetvars -> .)
-    END             reduce using rule 15 (resetvars -> .)
+    (123) main -> MAIN fd1 . resetvars stmnt vd1 END
+    (14) resetvars -> .
+    RETURN          reduce using rule 14 (resetvars -> .)
+    PEN_DOWN        reduce using rule 14 (resetvars -> .)
+    PEN_UP          reduce using rule 14 (resetvars -> .)
+    WHILE           reduce using rule 14 (resetvars -> .)
+    IF              reduce using rule 14 (resetvars -> .)
+    WRITE           reduce using rule 14 (resetvars -> .)
+    READ            reduce using rule 14 (resetvars -> .)
+    ID              reduce using rule 14 (resetvars -> .)
+    BOOL            reduce using rule 14 (resetvars -> .)
+    WORD            reduce using rule 14 (resetvars -> .)
+    NUMBER          reduce using rule 14 (resetvars -> .)
+    CENTER          reduce using rule 14 (resetvars -> .)
+    FORWARD         reduce using rule 14 (resetvars -> .)
+    RIGHT           reduce using rule 14 (resetvars -> .)
+    LEFT            reduce using rule 14 (resetvars -> .)
+    END             reduce using rule 14 (resetvars -> .)
 
     resetvars                      shift and go to state 31
 
 state 23
 
-    (14) func_declaration -> FUNC resetvars func_type . ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 END
+    (13) func_declaration -> FUNC resetvars func_type . ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 END
     ID              shift and go to state 32
 
 
@@ -527,12 +525,12 @@ state 28
     (4) var_declaration -> var_type addvartype ID varglobal multiple_var . var_declaration
     (3) var_declaration -> . empty
     (4) var_declaration -> . var_type addvartype ID varglobal multiple_var var_declaration
-    (125) empty -> .
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
-    FUNC            reduce using rule 125 (empty -> .)
-    MAIN            reduce using rule 125 (empty -> .)
+    (124) empty -> .
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
+    FUNC            reduce using rule 124 (empty -> .)
+    MAIN            reduce using rule 124 (empty -> .)
     BOOL            shift and go to state 9
     WORD            shift and go to state 10
     NUMBER          shift and go to state 11
@@ -543,23 +541,23 @@ state 28
 
 state 29
 
-    (8) multiple_var -> empty .
-    BOOL            reduce using rule 8 (multiple_var -> empty .)
-    WORD            reduce using rule 8 (multiple_var -> empty .)
-    NUMBER          reduce using rule 8 (multiple_var -> empty .)
-    FUNC            reduce using rule 8 (multiple_var -> empty .)
-    MAIN            reduce using rule 8 (multiple_var -> empty .)
+    (7) multiple_var -> empty .
+    BOOL            reduce using rule 7 (multiple_var -> empty .)
+    WORD            reduce using rule 7 (multiple_var -> empty .)
+    NUMBER          reduce using rule 7 (multiple_var -> empty .)
+    FUNC            reduce using rule 7 (multiple_var -> empty .)
+    MAIN            reduce using rule 7 (multiple_var -> empty .)
 
 
 state 30
 
-    (9) multiple_var -> COMMA . ID varglobal multiple_var
+    (8) multiple_var -> COMMA . ID varglobal multiple_var
     ID              shift and go to state 34
 
 
 state 31
 
-    (124) main -> MAIN fd1 resetvars . stmnt vd1 END
+    (123) main -> MAIN fd1 resetvars . stmnt vd1 END
     (26) stmnt -> . empty
     (27) stmnt -> . returnf stmnt
     (28) stmnt -> . var_declaration_func stmnt
@@ -571,7 +569,7 @@ state 31
     (34) stmnt -> . read stmnt
     (35) stmnt -> . func_call stmnt
     (36) stmnt -> . var_assignation stmnt
-    (125) empty -> .
+    (124) empty -> .
     (37) returnf -> . RETURN expression
     (38) var_declaration_func -> . var_type addvartype ID varid multiple_vars
     (121) pen_func -> . PEN_DOWN OPEN_PTH CLOSE_PTH
@@ -583,14 +581,14 @@ state 31
     (92) read -> . READ OPEN_PTH variable multiple_vars CLOSE_PTH
     (85) func_call -> . ID OPEN_PTH func1 func_call_param CLOSE_PTH func3
     (40) var_assignation -> . ID e5 assign e6 expression q3
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
     (117) move_type -> . CENTER
     (118) move_type -> . FORWARD
     (119) move_type -> . RIGHT
     (120) move_type -> . LEFT
-    END             reduce using rule 125 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
     RETURN          shift and go to state 47
     PEN_DOWN        shift and go to state 50
     PEN_UP          shift and go to state 51
@@ -624,7 +622,7 @@ state 31
 
 state 32
 
-    (14) func_declaration -> FUNC resetvars func_type ID . fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 END
+    (13) func_declaration -> FUNC resetvars func_type ID . fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 END
     (16) fd1 -> .
     OPEN_PTH        reduce using rule 16 (fd1 -> .)
 
@@ -639,7 +637,7 @@ state 33
 
 state 34
 
-    (9) multiple_var -> COMMA ID . varglobal multiple_var
+    (8) multiple_var -> COMMA ID . varglobal multiple_var
     (5) varglobal -> .
     COMMA           reduce using rule 5 (varglobal -> .)
     BOOL            reduce using rule 5 (varglobal -> .)
@@ -652,7 +650,7 @@ state 34
 
 state 35
 
-    (124) main -> MAIN fd1 resetvars stmnt . vd1 END
+    (123) main -> MAIN fd1 resetvars stmnt . vd1 END
     (17) vd1 -> .
     END             reduce using rule 17 (vd1 -> .)
 
@@ -679,7 +677,7 @@ state 37
     (34) stmnt -> . read stmnt
     (35) stmnt -> . func_call stmnt
     (36) stmnt -> . var_assignation stmnt
-    (125) empty -> .
+    (124) empty -> .
     (37) returnf -> . RETURN expression
     (38) var_declaration_func -> . var_type addvartype ID varid multiple_vars
     (121) pen_func -> . PEN_DOWN OPEN_PTH CLOSE_PTH
@@ -691,15 +689,15 @@ state 37
     (92) read -> . READ OPEN_PTH variable multiple_vars CLOSE_PTH
     (85) func_call -> . ID OPEN_PTH func1 func_call_param CLOSE_PTH func3
     (40) var_assignation -> . ID e5 assign e6 expression q3
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
     (117) move_type -> . CENTER
     (118) move_type -> . FORWARD
     (119) move_type -> . RIGHT
     (120) move_type -> . LEFT
-    END             reduce using rule 125 (empty -> .)
-    ELSE            reduce using rule 125 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
+    ELSE            reduce using rule 124 (empty -> .)
     RETURN          shift and go to state 47
     PEN_DOWN        shift and go to state 50
     PEN_UP          shift and go to state 51
@@ -745,7 +743,7 @@ state 38
     (34) stmnt -> . read stmnt
     (35) stmnt -> . func_call stmnt
     (36) stmnt -> . var_assignation stmnt
-    (125) empty -> .
+    (124) empty -> .
     (37) returnf -> . RETURN expression
     (38) var_declaration_func -> . var_type addvartype ID varid multiple_vars
     (121) pen_func -> . PEN_DOWN OPEN_PTH CLOSE_PTH
@@ -757,15 +755,15 @@ state 38
     (92) read -> . READ OPEN_PTH variable multiple_vars CLOSE_PTH
     (85) func_call -> . ID OPEN_PTH func1 func_call_param CLOSE_PTH func3
     (40) var_assignation -> . ID e5 assign e6 expression q3
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
     (117) move_type -> . CENTER
     (118) move_type -> . FORWARD
     (119) move_type -> . RIGHT
     (120) move_type -> . LEFT
-    END             reduce using rule 125 (empty -> .)
-    ELSE            reduce using rule 125 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
+    ELSE            reduce using rule 124 (empty -> .)
     RETURN          shift and go to state 47
     PEN_DOWN        shift and go to state 50
     PEN_UP          shift and go to state 51
@@ -811,7 +809,7 @@ state 39
     (34) stmnt -> . read stmnt
     (35) stmnt -> . func_call stmnt
     (36) stmnt -> . var_assignation stmnt
-    (125) empty -> .
+    (124) empty -> .
     (37) returnf -> . RETURN expression
     (38) var_declaration_func -> . var_type addvartype ID varid multiple_vars
     (121) pen_func -> . PEN_DOWN OPEN_PTH CLOSE_PTH
@@ -823,15 +821,15 @@ state 39
     (92) read -> . READ OPEN_PTH variable multiple_vars CLOSE_PTH
     (85) func_call -> . ID OPEN_PTH func1 func_call_param CLOSE_PTH func3
     (40) var_assignation -> . ID e5 assign e6 expression q3
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
     (117) move_type -> . CENTER
     (118) move_type -> . FORWARD
     (119) move_type -> . RIGHT
     (120) move_type -> . LEFT
-    END             reduce using rule 125 (empty -> .)
-    ELSE            reduce using rule 125 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
+    ELSE            reduce using rule 124 (empty -> .)
     RETURN          shift and go to state 47
     PEN_DOWN        shift and go to state 50
     PEN_UP          shift and go to state 51
@@ -877,7 +875,7 @@ state 40
     (34) stmnt -> . read stmnt
     (35) stmnt -> . func_call stmnt
     (36) stmnt -> . var_assignation stmnt
-    (125) empty -> .
+    (124) empty -> .
     (37) returnf -> . RETURN expression
     (38) var_declaration_func -> . var_type addvartype ID varid multiple_vars
     (121) pen_func -> . PEN_DOWN OPEN_PTH CLOSE_PTH
@@ -889,15 +887,15 @@ state 40
     (92) read -> . READ OPEN_PTH variable multiple_vars CLOSE_PTH
     (85) func_call -> . ID OPEN_PTH func1 func_call_param CLOSE_PTH func3
     (40) var_assignation -> . ID e5 assign e6 expression q3
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
     (117) move_type -> . CENTER
     (118) move_type -> . FORWARD
     (119) move_type -> . RIGHT
     (120) move_type -> . LEFT
-    END             reduce using rule 125 (empty -> .)
-    ELSE            reduce using rule 125 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
+    ELSE            reduce using rule 124 (empty -> .)
     RETURN          shift and go to state 47
     PEN_DOWN        shift and go to state 50
     PEN_UP          shift and go to state 51
@@ -943,7 +941,7 @@ state 41
     (34) stmnt -> . read stmnt
     (35) stmnt -> . func_call stmnt
     (36) stmnt -> . var_assignation stmnt
-    (125) empty -> .
+    (124) empty -> .
     (37) returnf -> . RETURN expression
     (38) var_declaration_func -> . var_type addvartype ID varid multiple_vars
     (121) pen_func -> . PEN_DOWN OPEN_PTH CLOSE_PTH
@@ -955,15 +953,15 @@ state 41
     (92) read -> . READ OPEN_PTH variable multiple_vars CLOSE_PTH
     (85) func_call -> . ID OPEN_PTH func1 func_call_param CLOSE_PTH func3
     (40) var_assignation -> . ID e5 assign e6 expression q3
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
     (117) move_type -> . CENTER
     (118) move_type -> . FORWARD
     (119) move_type -> . RIGHT
     (120) move_type -> . LEFT
-    END             reduce using rule 125 (empty -> .)
-    ELSE            reduce using rule 125 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
+    ELSE            reduce using rule 124 (empty -> .)
     RETURN          shift and go to state 47
     PEN_DOWN        shift and go to state 50
     PEN_UP          shift and go to state 51
@@ -1009,7 +1007,7 @@ state 42
     (34) stmnt -> . read stmnt
     (35) stmnt -> . func_call stmnt
     (36) stmnt -> . var_assignation stmnt
-    (125) empty -> .
+    (124) empty -> .
     (37) returnf -> . RETURN expression
     (38) var_declaration_func -> . var_type addvartype ID varid multiple_vars
     (121) pen_func -> . PEN_DOWN OPEN_PTH CLOSE_PTH
@@ -1021,15 +1019,15 @@ state 42
     (92) read -> . READ OPEN_PTH variable multiple_vars CLOSE_PTH
     (85) func_call -> . ID OPEN_PTH func1 func_call_param CLOSE_PTH func3
     (40) var_assignation -> . ID e5 assign e6 expression q3
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
     (117) move_type -> . CENTER
     (118) move_type -> . FORWARD
     (119) move_type -> . RIGHT
     (120) move_type -> . LEFT
-    END             reduce using rule 125 (empty -> .)
-    ELSE            reduce using rule 125 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
+    ELSE            reduce using rule 124 (empty -> .)
     RETURN          shift and go to state 47
     PEN_DOWN        shift and go to state 50
     PEN_UP          shift and go to state 51
@@ -1075,7 +1073,7 @@ state 43
     (34) stmnt -> . read stmnt
     (35) stmnt -> . func_call stmnt
     (36) stmnt -> . var_assignation stmnt
-    (125) empty -> .
+    (124) empty -> .
     (37) returnf -> . RETURN expression
     (38) var_declaration_func -> . var_type addvartype ID varid multiple_vars
     (121) pen_func -> . PEN_DOWN OPEN_PTH CLOSE_PTH
@@ -1087,15 +1085,15 @@ state 43
     (92) read -> . READ OPEN_PTH variable multiple_vars CLOSE_PTH
     (85) func_call -> . ID OPEN_PTH func1 func_call_param CLOSE_PTH func3
     (40) var_assignation -> . ID e5 assign e6 expression q3
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
     (117) move_type -> . CENTER
     (118) move_type -> . FORWARD
     (119) move_type -> . RIGHT
     (120) move_type -> . LEFT
-    END             reduce using rule 125 (empty -> .)
-    ELSE            reduce using rule 125 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
+    ELSE            reduce using rule 124 (empty -> .)
     RETURN          shift and go to state 47
     PEN_DOWN        shift and go to state 50
     PEN_UP          shift and go to state 51
@@ -1141,7 +1139,7 @@ state 44
     (34) stmnt -> . read stmnt
     (35) stmnt -> . func_call stmnt
     (36) stmnt -> . var_assignation stmnt
-    (125) empty -> .
+    (124) empty -> .
     (37) returnf -> . RETURN expression
     (38) var_declaration_func -> . var_type addvartype ID varid multiple_vars
     (121) pen_func -> . PEN_DOWN OPEN_PTH CLOSE_PTH
@@ -1153,15 +1151,15 @@ state 44
     (92) read -> . READ OPEN_PTH variable multiple_vars CLOSE_PTH
     (85) func_call -> . ID OPEN_PTH func1 func_call_param CLOSE_PTH func3
     (40) var_assignation -> . ID e5 assign e6 expression q3
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
     (117) move_type -> . CENTER
     (118) move_type -> . FORWARD
     (119) move_type -> . RIGHT
     (120) move_type -> . LEFT
-    END             reduce using rule 125 (empty -> .)
-    ELSE            reduce using rule 125 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
+    ELSE            reduce using rule 124 (empty -> .)
     RETURN          shift and go to state 47
     PEN_DOWN        shift and go to state 50
     PEN_UP          shift and go to state 51
@@ -1207,7 +1205,7 @@ state 45
     (34) stmnt -> . read stmnt
     (35) stmnt -> . func_call stmnt
     (36) stmnt -> . var_assignation stmnt
-    (125) empty -> .
+    (124) empty -> .
     (37) returnf -> . RETURN expression
     (38) var_declaration_func -> . var_type addvartype ID varid multiple_vars
     (121) pen_func -> . PEN_DOWN OPEN_PTH CLOSE_PTH
@@ -1219,15 +1217,15 @@ state 45
     (92) read -> . READ OPEN_PTH variable multiple_vars CLOSE_PTH
     (85) func_call -> . ID OPEN_PTH func1 func_call_param CLOSE_PTH func3
     (40) var_assignation -> . ID e5 assign e6 expression q3
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
     (117) move_type -> . CENTER
     (118) move_type -> . FORWARD
     (119) move_type -> . RIGHT
     (120) move_type -> . LEFT
-    END             reduce using rule 125 (empty -> .)
-    ELSE            reduce using rule 125 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
+    ELSE            reduce using rule 124 (empty -> .)
     RETURN          shift and go to state 47
     PEN_DOWN        shift and go to state 50
     PEN_UP          shift and go to state 51
@@ -1273,7 +1271,7 @@ state 46
     (34) stmnt -> . read stmnt
     (35) stmnt -> . func_call stmnt
     (36) stmnt -> . var_assignation stmnt
-    (125) empty -> .
+    (124) empty -> .
     (37) returnf -> . RETURN expression
     (38) var_declaration_func -> . var_type addvartype ID varid multiple_vars
     (121) pen_func -> . PEN_DOWN OPEN_PTH CLOSE_PTH
@@ -1285,15 +1283,15 @@ state 46
     (92) read -> . READ OPEN_PTH variable multiple_vars CLOSE_PTH
     (85) func_call -> . ID OPEN_PTH func1 func_call_param CLOSE_PTH func3
     (40) var_assignation -> . ID e5 assign e6 expression q3
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
     (117) move_type -> . CENTER
     (118) move_type -> . FORWARD
     (119) move_type -> . RIGHT
     (120) move_type -> . LEFT
-    END             reduce using rule 125 (empty -> .)
-    ELSE            reduce using rule 125 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
+    ELSE            reduce using rule 124 (empty -> .)
     RETURN          shift and go to state 47
     PEN_DOWN        shift and go to state 50
     PEN_UP          shift and go to state 51
@@ -1495,29 +1493,29 @@ state 60
 
 state 61
 
-    (14) func_declaration -> FUNC resetvars func_type ID fd1 . OPEN_PTH parameter CLOSE_PTH stmnt vd1 END
+    (13) func_declaration -> FUNC resetvars func_type ID fd1 . OPEN_PTH parameter CLOSE_PTH stmnt vd1 END
     OPEN_PTH        shift and go to state 100
 
 
 state 62
 
-    (9) multiple_var -> COMMA ID varglobal . multiple_var
-    (8) multiple_var -> . empty
-    (9) multiple_var -> . COMMA ID varglobal multiple_var
-    (125) empty -> .
+    (8) multiple_var -> COMMA ID varglobal . multiple_var
+    (7) multiple_var -> . empty
+    (8) multiple_var -> . COMMA ID varglobal multiple_var
+    (124) empty -> .
     COMMA           shift and go to state 30
-    BOOL            reduce using rule 125 (empty -> .)
-    WORD            reduce using rule 125 (empty -> .)
-    NUMBER          reduce using rule 125 (empty -> .)
-    FUNC            reduce using rule 125 (empty -> .)
-    MAIN            reduce using rule 125 (empty -> .)
+    BOOL            reduce using rule 124 (empty -> .)
+    WORD            reduce using rule 124 (empty -> .)
+    NUMBER          reduce using rule 124 (empty -> .)
+    FUNC            reduce using rule 124 (empty -> .)
+    MAIN            reduce using rule 124 (empty -> .)
 
     multiple_var                   shift and go to state 101
     empty                          shift and go to state 29
 
 state 63
 
-    (124) main -> MAIN fd1 resetvars stmnt vd1 . END
+    (123) main -> MAIN fd1 resetvars stmnt vd1 . END
     END             shift and go to state 102
 
 
@@ -1772,41 +1770,41 @@ state 77
     (93) variable -> ID . array
     (94) array -> . empty
     (95) array -> . OPEN_SQR expression CLOSE_SQR matrix
-    (125) empty -> .
+    (124) empty -> .
     OPEN_PTH        shift and go to state 90
     OPEN_SQR        shift and go to state 114
-    RETURN          reduce using rule 125 (empty -> .)
-    PEN_DOWN        reduce using rule 125 (empty -> .)
-    PEN_UP          reduce using rule 125 (empty -> .)
-    WHILE           reduce using rule 125 (empty -> .)
-    IF              reduce using rule 125 (empty -> .)
-    WRITE           reduce using rule 125 (empty -> .)
-    READ            reduce using rule 125 (empty -> .)
-    ID              reduce using rule 125 (empty -> .)
-    BOOL            reduce using rule 125 (empty -> .)
-    WORD            reduce using rule 125 (empty -> .)
-    NUMBER          reduce using rule 125 (empty -> .)
-    CENTER          reduce using rule 125 (empty -> .)
-    FORWARD         reduce using rule 125 (empty -> .)
-    RIGHT           reduce using rule 125 (empty -> .)
-    LEFT            reduce using rule 125 (empty -> .)
-    END             reduce using rule 125 (empty -> .)
-    ELSE            reduce using rule 125 (empty -> .)
-    DIV             reduce using rule 125 (empty -> .)
-    MULT            reduce using rule 125 (empty -> .)
-    SUB             reduce using rule 125 (empty -> .)
-    SUM             reduce using rule 125 (empty -> .)
-    EQUAL_TO        reduce using rule 125 (empty -> .)
-    MORE_OR_EQ_THAN reduce using rule 125 (empty -> .)
-    LESS_OR_EQ_THAN reduce using rule 125 (empty -> .)
-    DIFFERENT_TO    reduce using rule 125 (empty -> .)
-    MORE_THAN       reduce using rule 125 (empty -> .)
-    LESS_THAN       reduce using rule 125 (empty -> .)
-    OR              reduce using rule 125 (empty -> .)
-    AND             reduce using rule 125 (empty -> .)
-    CLOSE_PTH       reduce using rule 125 (empty -> .)
-    COMMA           reduce using rule 125 (empty -> .)
-    CLOSE_SQR       reduce using rule 125 (empty -> .)
+    RETURN          reduce using rule 124 (empty -> .)
+    PEN_DOWN        reduce using rule 124 (empty -> .)
+    PEN_UP          reduce using rule 124 (empty -> .)
+    WHILE           reduce using rule 124 (empty -> .)
+    IF              reduce using rule 124 (empty -> .)
+    WRITE           reduce using rule 124 (empty -> .)
+    READ            reduce using rule 124 (empty -> .)
+    ID              reduce using rule 124 (empty -> .)
+    BOOL            reduce using rule 124 (empty -> .)
+    WORD            reduce using rule 124 (empty -> .)
+    NUMBER          reduce using rule 124 (empty -> .)
+    CENTER          reduce using rule 124 (empty -> .)
+    FORWARD         reduce using rule 124 (empty -> .)
+    RIGHT           reduce using rule 124 (empty -> .)
+    LEFT            reduce using rule 124 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
+    ELSE            reduce using rule 124 (empty -> .)
+    DIV             reduce using rule 124 (empty -> .)
+    MULT            reduce using rule 124 (empty -> .)
+    SUB             reduce using rule 124 (empty -> .)
+    SUM             reduce using rule 124 (empty -> .)
+    EQUAL_TO        reduce using rule 124 (empty -> .)
+    MORE_OR_EQ_THAN reduce using rule 124 (empty -> .)
+    LESS_OR_EQ_THAN reduce using rule 124 (empty -> .)
+    DIFFERENT_TO    reduce using rule 124 (empty -> .)
+    MORE_THAN       reduce using rule 124 (empty -> .)
+    LESS_THAN       reduce using rule 124 (empty -> .)
+    OR              reduce using rule 124 (empty -> .)
+    AND             reduce using rule 124 (empty -> .)
+    CLOSE_PTH       reduce using rule 124 (empty -> .)
+    COMMA           reduce using rule 124 (empty -> .)
+    CLOSE_SQR       reduce using rule 124 (empty -> .)
 
     array                          shift and go to state 112
     empty                          shift and go to state 113
@@ -2474,14 +2472,14 @@ state 99
 
 state 100
 
-    (14) func_declaration -> FUNC resetvars func_type ID fd1 OPEN_PTH . parameter CLOSE_PTH stmnt vd1 END
+    (13) func_declaration -> FUNC resetvars func_type ID fd1 OPEN_PTH . parameter CLOSE_PTH stmnt vd1 END
     (22) parameter -> . empty
     (23) parameter -> . var_type addvartype ID varid multiple_parameters
-    (125) empty -> .
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
-    CLOSE_PTH       reduce using rule 125 (empty -> .)
+    (124) empty -> .
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
+    CLOSE_PTH       reduce using rule 124 (empty -> .)
     BOOL            shift and go to state 9
     WORD            shift and go to state 10
     NUMBER          shift and go to state 11
@@ -2492,18 +2490,18 @@ state 100
 
 state 101
 
-    (9) multiple_var -> COMMA ID varglobal multiple_var .
-    BOOL            reduce using rule 9 (multiple_var -> COMMA ID varglobal multiple_var .)
-    WORD            reduce using rule 9 (multiple_var -> COMMA ID varglobal multiple_var .)
-    NUMBER          reduce using rule 9 (multiple_var -> COMMA ID varglobal multiple_var .)
-    FUNC            reduce using rule 9 (multiple_var -> COMMA ID varglobal multiple_var .)
-    MAIN            reduce using rule 9 (multiple_var -> COMMA ID varglobal multiple_var .)
+    (8) multiple_var -> COMMA ID varglobal multiple_var .
+    BOOL            reduce using rule 8 (multiple_var -> COMMA ID varglobal multiple_var .)
+    WORD            reduce using rule 8 (multiple_var -> COMMA ID varglobal multiple_var .)
+    NUMBER          reduce using rule 8 (multiple_var -> COMMA ID varglobal multiple_var .)
+    FUNC            reduce using rule 8 (multiple_var -> COMMA ID varglobal multiple_var .)
+    MAIN            reduce using rule 8 (multiple_var -> COMMA ID varglobal multiple_var .)
 
 
 state 102
 
-    (124) main -> MAIN fd1 resetvars stmnt vd1 END .
-    $end            reduce using rule 124 (main -> MAIN fd1 resetvars stmnt vd1 END .)
+    (123) main -> MAIN fd1 resetvars stmnt vd1 END .
+    $end            reduce using rule 123 (main -> MAIN fd1 resetvars stmnt vd1 END .)
 
 
 state 103
@@ -3312,7 +3310,7 @@ state 137
     (34) stmnt -> . read stmnt
     (35) stmnt -> . func_call stmnt
     (36) stmnt -> . var_assignation stmnt
-    (125) empty -> .
+    (124) empty -> .
     (37) returnf -> . RETURN expression
     (38) var_declaration_func -> . var_type addvartype ID varid multiple_vars
     (121) pen_func -> . PEN_DOWN OPEN_PTH CLOSE_PTH
@@ -3324,15 +3322,15 @@ state 137
     (92) read -> . READ OPEN_PTH variable multiple_vars CLOSE_PTH
     (85) func_call -> . ID OPEN_PTH func1 func_call_param CLOSE_PTH func3
     (40) var_assignation -> . ID e5 assign e6 expression q3
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
     (117) move_type -> . CENTER
     (118) move_type -> . FORWARD
     (119) move_type -> . RIGHT
     (120) move_type -> . LEFT
-    END             reduce using rule 125 (empty -> .)
-    ELSE            reduce using rule 125 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
+    ELSE            reduce using rule 124 (empty -> .)
     RETURN          shift and go to state 47
     PEN_DOWN        shift and go to state 50
     PEN_UP          shift and go to state 51
@@ -3415,9 +3413,9 @@ state 140
     (92) read -> READ OPEN_PTH variable . multiple_vars CLOSE_PTH
     (98) multiple_vars -> . empty
     (99) multiple_vars -> . COMMA variable varid multiple_vars
-    (125) empty -> .
+    (124) empty -> .
     COMMA           shift and go to state 165
-    CLOSE_PTH       reduce using rule 125 (empty -> .)
+    CLOSE_PTH       reduce using rule 124 (empty -> .)
 
     multiple_vars                  shift and go to state 163
     empty                          shift and go to state 164
@@ -3427,34 +3425,34 @@ state 141
     (93) variable -> ID . array
     (94) array -> . empty
     (95) array -> . OPEN_SQR expression CLOSE_SQR matrix
-    (125) empty -> .
+    (124) empty -> .
     OPEN_SQR        shift and go to state 114
-    COMMA           reduce using rule 125 (empty -> .)
-    CLOSE_PTH       reduce using rule 125 (empty -> .)
-    RETURN          reduce using rule 125 (empty -> .)
-    PEN_DOWN        reduce using rule 125 (empty -> .)
-    PEN_UP          reduce using rule 125 (empty -> .)
-    WHILE           reduce using rule 125 (empty -> .)
-    IF              reduce using rule 125 (empty -> .)
-    WRITE           reduce using rule 125 (empty -> .)
-    READ            reduce using rule 125 (empty -> .)
-    ID              reduce using rule 125 (empty -> .)
-    BOOL            reduce using rule 125 (empty -> .)
-    WORD            reduce using rule 125 (empty -> .)
-    NUMBER          reduce using rule 125 (empty -> .)
-    CENTER          reduce using rule 125 (empty -> .)
-    FORWARD         reduce using rule 125 (empty -> .)
-    RIGHT           reduce using rule 125 (empty -> .)
-    LEFT            reduce using rule 125 (empty -> .)
-    END             reduce using rule 125 (empty -> .)
-    ELSE            reduce using rule 125 (empty -> .)
+    COMMA           reduce using rule 124 (empty -> .)
+    CLOSE_PTH       reduce using rule 124 (empty -> .)
+    RETURN          reduce using rule 124 (empty -> .)
+    PEN_DOWN        reduce using rule 124 (empty -> .)
+    PEN_UP          reduce using rule 124 (empty -> .)
+    WHILE           reduce using rule 124 (empty -> .)
+    IF              reduce using rule 124 (empty -> .)
+    WRITE           reduce using rule 124 (empty -> .)
+    READ            reduce using rule 124 (empty -> .)
+    ID              reduce using rule 124 (empty -> .)
+    BOOL            reduce using rule 124 (empty -> .)
+    WORD            reduce using rule 124 (empty -> .)
+    NUMBER          reduce using rule 124 (empty -> .)
+    CENTER          reduce using rule 124 (empty -> .)
+    FORWARD         reduce using rule 124 (empty -> .)
+    RIGHT           reduce using rule 124 (empty -> .)
+    LEFT            reduce using rule 124 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
+    ELSE            reduce using rule 124 (empty -> .)
 
     array                          shift and go to state 112
     empty                          shift and go to state 113
 
 state 142
 
-    (14) func_declaration -> FUNC resetvars func_type ID fd1 OPEN_PTH parameter . CLOSE_PTH stmnt vd1 END
+    (13) func_declaration -> FUNC resetvars func_type ID fd1 OPEN_PTH parameter . CLOSE_PTH stmnt vd1 END
     CLOSE_PTH       shift and go to state 166
 
 
@@ -3740,25 +3738,25 @@ state 152
     (38) var_declaration_func -> var_type addvartype ID varid . multiple_vars
     (98) multiple_vars -> . empty
     (99) multiple_vars -> . COMMA variable varid multiple_vars
-    (125) empty -> .
+    (124) empty -> .
     COMMA           shift and go to state 165
-    RETURN          reduce using rule 125 (empty -> .)
-    PEN_DOWN        reduce using rule 125 (empty -> .)
-    PEN_UP          reduce using rule 125 (empty -> .)
-    WHILE           reduce using rule 125 (empty -> .)
-    IF              reduce using rule 125 (empty -> .)
-    WRITE           reduce using rule 125 (empty -> .)
-    READ            reduce using rule 125 (empty -> .)
-    ID              reduce using rule 125 (empty -> .)
-    BOOL            reduce using rule 125 (empty -> .)
-    WORD            reduce using rule 125 (empty -> .)
-    NUMBER          reduce using rule 125 (empty -> .)
-    CENTER          reduce using rule 125 (empty -> .)
-    FORWARD         reduce using rule 125 (empty -> .)
-    RIGHT           reduce using rule 125 (empty -> .)
-    LEFT            reduce using rule 125 (empty -> .)
-    END             reduce using rule 125 (empty -> .)
-    ELSE            reduce using rule 125 (empty -> .)
+    RETURN          reduce using rule 124 (empty -> .)
+    PEN_DOWN        reduce using rule 124 (empty -> .)
+    PEN_UP          reduce using rule 124 (empty -> .)
+    WHILE           reduce using rule 124 (empty -> .)
+    IF              reduce using rule 124 (empty -> .)
+    WRITE           reduce using rule 124 (empty -> .)
+    READ            reduce using rule 124 (empty -> .)
+    ID              reduce using rule 124 (empty -> .)
+    BOOL            reduce using rule 124 (empty -> .)
+    WORD            reduce using rule 124 (empty -> .)
+    NUMBER          reduce using rule 124 (empty -> .)
+    CENTER          reduce using rule 124 (empty -> .)
+    FORWARD         reduce using rule 124 (empty -> .)
+    RIGHT           reduce using rule 124 (empty -> .)
+    LEFT            reduce using rule 124 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
+    ELSE            reduce using rule 124 (empty -> .)
 
     multiple_vars                  shift and go to state 172
     empty                          shift and go to state 164
@@ -3836,9 +3834,9 @@ state 156
     (87) func_call_param -> expression func2 . multiple_fc_param
     (90) multiple_fc_param -> . empty
     (91) multiple_fc_param -> . COMMA func_call_param
-    (125) empty -> .
+    (124) empty -> .
     COMMA           shift and go to state 177
-    CLOSE_PTH       reduce using rule 125 (empty -> .)
+    CLOSE_PTH       reduce using rule 124 (empty -> .)
 
     multiple_fc_param              shift and go to state 175
     empty                          shift and go to state 176
@@ -3857,7 +3855,7 @@ state 157
     (34) stmnt -> . read stmnt
     (35) stmnt -> . func_call stmnt
     (36) stmnt -> . var_assignation stmnt
-    (125) empty -> .
+    (124) empty -> .
     (37) returnf -> . RETURN expression
     (38) var_declaration_func -> . var_type addvartype ID varid multiple_vars
     (121) pen_func -> . PEN_DOWN OPEN_PTH CLOSE_PTH
@@ -3869,14 +3867,14 @@ state 157
     (92) read -> . READ OPEN_PTH variable multiple_vars CLOSE_PTH
     (85) func_call -> . ID OPEN_PTH func1 func_call_param CLOSE_PTH func3
     (40) var_assignation -> . ID e5 assign e6 expression q3
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
     (117) move_type -> . CENTER
     (118) move_type -> . FORWARD
     (119) move_type -> . RIGHT
     (120) move_type -> . LEFT
-    END             reduce using rule 125 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
     RETURN          shift and go to state 47
     PEN_DOWN        shift and go to state 50
     PEN_UP          shift and go to state 51
@@ -4013,7 +4011,7 @@ state 165
 
 state 166
 
-    (14) func_declaration -> FUNC resetvars func_type ID fd1 OPEN_PTH parameter CLOSE_PTH . stmnt vd1 END
+    (13) func_declaration -> FUNC resetvars func_type ID fd1 OPEN_PTH parameter CLOSE_PTH . stmnt vd1 END
     (26) stmnt -> . empty
     (27) stmnt -> . returnf stmnt
     (28) stmnt -> . var_declaration_func stmnt
@@ -4025,7 +4023,7 @@ state 166
     (34) stmnt -> . read stmnt
     (35) stmnt -> . func_call stmnt
     (36) stmnt -> . var_assignation stmnt
-    (125) empty -> .
+    (124) empty -> .
     (37) returnf -> . RETURN expression
     (38) var_declaration_func -> . var_type addvartype ID varid multiple_vars
     (121) pen_func -> . PEN_DOWN OPEN_PTH CLOSE_PTH
@@ -4037,14 +4035,14 @@ state 166
     (92) read -> . READ OPEN_PTH variable multiple_vars CLOSE_PTH
     (85) func_call -> . ID OPEN_PTH func1 func_call_param CLOSE_PTH func3
     (40) var_assignation -> . ID e5 assign e6 expression q3
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
     (117) move_type -> . CENTER
     (118) move_type -> . FORWARD
     (119) move_type -> . RIGHT
     (120) move_type -> . LEFT
-    END             reduce using rule 125 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
     RETURN          shift and go to state 47
     PEN_DOWN        shift and go to state 50
     PEN_UP          shift and go to state 51
@@ -4157,40 +4155,40 @@ state 169
     (95) array -> OPEN_SQR expression CLOSE_SQR . matrix
     (96) matrix -> . empty
     (97) matrix -> . OPEN_SQR expression CLOSE_SQR
-    (125) empty -> .
+    (124) empty -> .
     OPEN_SQR        shift and go to state 185
-    RETURN          reduce using rule 125 (empty -> .)
-    PEN_DOWN        reduce using rule 125 (empty -> .)
-    PEN_UP          reduce using rule 125 (empty -> .)
-    WHILE           reduce using rule 125 (empty -> .)
-    IF              reduce using rule 125 (empty -> .)
-    WRITE           reduce using rule 125 (empty -> .)
-    READ            reduce using rule 125 (empty -> .)
-    ID              reduce using rule 125 (empty -> .)
-    BOOL            reduce using rule 125 (empty -> .)
-    WORD            reduce using rule 125 (empty -> .)
-    NUMBER          reduce using rule 125 (empty -> .)
-    CENTER          reduce using rule 125 (empty -> .)
-    FORWARD         reduce using rule 125 (empty -> .)
-    RIGHT           reduce using rule 125 (empty -> .)
-    LEFT            reduce using rule 125 (empty -> .)
-    END             reduce using rule 125 (empty -> .)
-    ELSE            reduce using rule 125 (empty -> .)
-    DIV             reduce using rule 125 (empty -> .)
-    MULT            reduce using rule 125 (empty -> .)
-    SUB             reduce using rule 125 (empty -> .)
-    SUM             reduce using rule 125 (empty -> .)
-    EQUAL_TO        reduce using rule 125 (empty -> .)
-    MORE_OR_EQ_THAN reduce using rule 125 (empty -> .)
-    LESS_OR_EQ_THAN reduce using rule 125 (empty -> .)
-    DIFFERENT_TO    reduce using rule 125 (empty -> .)
-    MORE_THAN       reduce using rule 125 (empty -> .)
-    LESS_THAN       reduce using rule 125 (empty -> .)
-    OR              reduce using rule 125 (empty -> .)
-    AND             reduce using rule 125 (empty -> .)
-    CLOSE_PTH       reduce using rule 125 (empty -> .)
-    COMMA           reduce using rule 125 (empty -> .)
-    CLOSE_SQR       reduce using rule 125 (empty -> .)
+    RETURN          reduce using rule 124 (empty -> .)
+    PEN_DOWN        reduce using rule 124 (empty -> .)
+    PEN_UP          reduce using rule 124 (empty -> .)
+    WHILE           reduce using rule 124 (empty -> .)
+    IF              reduce using rule 124 (empty -> .)
+    WRITE           reduce using rule 124 (empty -> .)
+    READ            reduce using rule 124 (empty -> .)
+    ID              reduce using rule 124 (empty -> .)
+    BOOL            reduce using rule 124 (empty -> .)
+    WORD            reduce using rule 124 (empty -> .)
+    NUMBER          reduce using rule 124 (empty -> .)
+    CENTER          reduce using rule 124 (empty -> .)
+    FORWARD         reduce using rule 124 (empty -> .)
+    RIGHT           reduce using rule 124 (empty -> .)
+    LEFT            reduce using rule 124 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
+    ELSE            reduce using rule 124 (empty -> .)
+    DIV             reduce using rule 124 (empty -> .)
+    MULT            reduce using rule 124 (empty -> .)
+    SUB             reduce using rule 124 (empty -> .)
+    SUM             reduce using rule 124 (empty -> .)
+    EQUAL_TO        reduce using rule 124 (empty -> .)
+    MORE_OR_EQ_THAN reduce using rule 124 (empty -> .)
+    LESS_OR_EQ_THAN reduce using rule 124 (empty -> .)
+    DIFFERENT_TO    reduce using rule 124 (empty -> .)
+    MORE_THAN       reduce using rule 124 (empty -> .)
+    LESS_THAN       reduce using rule 124 (empty -> .)
+    OR              reduce using rule 124 (empty -> .)
+    AND             reduce using rule 124 (empty -> .)
+    CLOSE_PTH       reduce using rule 124 (empty -> .)
+    COMMA           reduce using rule 124 (empty -> .)
+    CLOSE_SQR       reduce using rule 124 (empty -> .)
 
     matrix                         shift and go to state 186
     empty                          shift and go to state 187
@@ -4562,7 +4560,7 @@ state 182
 
 state 183
 
-    (14) func_declaration -> FUNC resetvars func_type ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt . vd1 END
+    (13) func_declaration -> FUNC resetvars func_type ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt . vd1 END
     (17) vd1 -> .
     END             reduce using rule 17 (vd1 -> .)
 
@@ -5026,33 +5024,33 @@ state 198
     (99) multiple_vars -> COMMA variable varid . multiple_vars
     (98) multiple_vars -> . empty
     (99) multiple_vars -> . COMMA variable varid multiple_vars
-    (125) empty -> .
+    (124) empty -> .
     COMMA           shift and go to state 165
-    CLOSE_PTH       reduce using rule 125 (empty -> .)
-    RETURN          reduce using rule 125 (empty -> .)
-    PEN_DOWN        reduce using rule 125 (empty -> .)
-    PEN_UP          reduce using rule 125 (empty -> .)
-    WHILE           reduce using rule 125 (empty -> .)
-    IF              reduce using rule 125 (empty -> .)
-    WRITE           reduce using rule 125 (empty -> .)
-    READ            reduce using rule 125 (empty -> .)
-    ID              reduce using rule 125 (empty -> .)
-    BOOL            reduce using rule 125 (empty -> .)
-    WORD            reduce using rule 125 (empty -> .)
-    NUMBER          reduce using rule 125 (empty -> .)
-    CENTER          reduce using rule 125 (empty -> .)
-    FORWARD         reduce using rule 125 (empty -> .)
-    RIGHT           reduce using rule 125 (empty -> .)
-    LEFT            reduce using rule 125 (empty -> .)
-    END             reduce using rule 125 (empty -> .)
-    ELSE            reduce using rule 125 (empty -> .)
+    CLOSE_PTH       reduce using rule 124 (empty -> .)
+    RETURN          reduce using rule 124 (empty -> .)
+    PEN_DOWN        reduce using rule 124 (empty -> .)
+    PEN_UP          reduce using rule 124 (empty -> .)
+    WHILE           reduce using rule 124 (empty -> .)
+    IF              reduce using rule 124 (empty -> .)
+    WRITE           reduce using rule 124 (empty -> .)
+    READ            reduce using rule 124 (empty -> .)
+    ID              reduce using rule 124 (empty -> .)
+    BOOL            reduce using rule 124 (empty -> .)
+    WORD            reduce using rule 124 (empty -> .)
+    NUMBER          reduce using rule 124 (empty -> .)
+    CENTER          reduce using rule 124 (empty -> .)
+    FORWARD         reduce using rule 124 (empty -> .)
+    RIGHT           reduce using rule 124 (empty -> .)
+    LEFT            reduce using rule 124 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
+    ELSE            reduce using rule 124 (empty -> .)
 
     multiple_vars                  shift and go to state 205
     empty                          shift and go to state 164
 
 state 199
 
-    (14) func_declaration -> FUNC resetvars func_type ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 . END
+    (13) func_declaration -> FUNC resetvars func_type ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 . END
     END             shift and go to state 206
 
 
@@ -5061,9 +5059,9 @@ state 200
     (23) parameter -> var_type addvartype ID varid . multiple_parameters
     (24) multiple_parameters -> . empty
     (25) multiple_parameters -> . COMMA parameter
-    (125) empty -> .
+    (124) empty -> .
     COMMA           shift and go to state 209
-    CLOSE_PTH       reduce using rule 125 (empty -> .)
+    CLOSE_PTH       reduce using rule 124 (empty -> .)
 
     multiple_parameters            shift and go to state 207
     empty                          shift and go to state 208
@@ -5122,7 +5120,7 @@ state 203
     (34) stmnt -> . read stmnt
     (35) stmnt -> . func_call stmnt
     (36) stmnt -> . var_assignation stmnt
-    (125) empty -> .
+    (124) empty -> .
     (37) returnf -> . RETURN expression
     (38) var_declaration_func -> . var_type addvartype ID varid multiple_vars
     (121) pen_func -> . PEN_DOWN OPEN_PTH CLOSE_PTH
@@ -5134,14 +5132,14 @@ state 203
     (92) read -> . READ OPEN_PTH variable multiple_vars CLOSE_PTH
     (85) func_call -> . ID OPEN_PTH func1 func_call_param CLOSE_PTH func3
     (40) var_assignation -> . ID e5 assign e6 expression q3
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
     (117) move_type -> . CENTER
     (118) move_type -> . FORWARD
     (119) move_type -> . RIGHT
     (120) move_type -> . LEFT
-    END             reduce using rule 125 (empty -> .)
+    END             reduce using rule 124 (empty -> .)
     RETURN          shift and go to state 47
     PEN_DOWN        shift and go to state 50
     PEN_UP          shift and go to state 51
@@ -5220,8 +5218,8 @@ state 205
 
 state 206
 
-    (14) func_declaration -> FUNC resetvars func_type ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 END .
-    MAIN            reduce using rule 14 (func_declaration -> FUNC resetvars func_type ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 END .)
+    (13) func_declaration -> FUNC resetvars func_type ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 END .
+    MAIN            reduce using rule 13 (func_declaration -> FUNC resetvars func_type ID fd1 OPEN_PTH parameter CLOSE_PTH stmnt vd1 END .)
 
 
 state 207
@@ -5241,11 +5239,11 @@ state 209
     (25) multiple_parameters -> COMMA . parameter
     (22) parameter -> . empty
     (23) parameter -> . var_type addvartype ID varid multiple_parameters
-    (125) empty -> .
-    (10) var_type -> . BOOL
-    (11) var_type -> . WORD
-    (12) var_type -> . NUMBER
-    CLOSE_PTH       reduce using rule 125 (empty -> .)
+    (124) empty -> .
+    (9) var_type -> . BOOL
+    (10) var_type -> . WORD
+    (11) var_type -> . NUMBER
+    CLOSE_PTH       reduce using rule 124 (empty -> .)
     BOOL            shift and go to state 9
     WORD            shift and go to state 10
     NUMBER          shift and go to state 11

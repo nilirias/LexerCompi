@@ -76,13 +76,10 @@ class MikuParser(Parser):
 
     @_('var_type addvartype ID varglobal multiple_var \n var_declaration', 'empty')
     def var_declaration(self, p):
-        #print(f'oooooooooooooooooooo {self.varidd}')
         return p[0]
 
     @_('')
     def varglobal(self, p):
-      #self.varidd = p[-1] #variable name
-      print(self.vartype)
       if (self.vartype == 'number'):
         self.dir = self.numglb
         self.numglb = self.numglb + 1
@@ -94,16 +91,12 @@ class MikuParser(Parser):
       if (self.vartype == 'bool'):
         self.dir = self.boolglb
         self.boolglb = self.boolglb + 1
-        
+
       self.vardir.add_var(p[-1], self.dir)
       
     @_('')
     def addvartype(self, p):
       self.vartype = p[-1]
-      
-    @_('')
-    def addvardic(self, p):
-      self.vardir.add_var(p[-1], 1, 1, 1)
 
     @_('COMMA ID varglobal multiple_var', 'empty')
     def multiple_var(self, p):
@@ -123,13 +116,18 @@ class MikuParser(Parser):
       self.numlcl = 1500
       self.wordlcl = 2000
       self.boollcl = 2500
+
+    @_('')
+    def resettemp(self, p):
+      self.numtemp = 3000
+      self.wordtemp = 3500
+      self.booltemp = 4000
+      
     # function id
     @_('')
     def fd1(self, p):
       self.funcid = p[-1]
-      #print(self.funcid)
 
-    # es agregar las variables a la tabla de variables de una funcion
     @_('')
     def vd1(self, p):
         self.funcdir.add_func(self.funcid, self.functype, 'varc', self.pcont, 'vart', self.vardir)
@@ -144,19 +142,16 @@ class MikuParser(Parser):
     @_('var_type addvartype ID varid multiple_parameters', 'empty')
     def parameter(self, p):
         self.pcont = self.pcont + 1
-        #print(f'eeeeeeeeeeeeeeeee {self.varidd}')
         return p[0]
 
     @_('COMMA parameter', 'empty')
     def multiple_parameters(self, p):
-        #print(f'multiple_parameters {p[0]}')
         return p[0]
 
     @_('var_assignation stmnt', 'func_call stmnt', 'read stmnt', 'write stmnt',
        'if_stmnt stmnt', 'while_stmnt stmnt', 'move_func stmnt',
        'pen_func stmnt', 'var_declaration_func stmnt', 'returnf stmnt', 'empty')
     def stmnt(self, p):
-        ##print(f'stmnt {p[0]}')
         return p[0]
 
     @_('RETURN expression')
@@ -165,28 +160,24 @@ class MikuParser(Parser):
 
     @_('var_type addvartype ID varid multiple_vars \n')
     def var_declaration_func(self, p):
-        #print(f'uuuuuuuuuuuuuuuuuuuu {self.varidd}')
         return p[0]
       
     @_('')
     def varid(self, p):
-      #self.varidd = p[-1] #variable name
-      #print(self.vartype)
       if (self.vartype == 'number'):
         self.dir = self.numlcl
         self.numlcl = self.numlcl + 1
-        print(p[-1], self.numlcl)
+        #print(p[-1], self.numlcl)
         
       if (self.vartype == 'word'):
         self.dir = self.wordlcl
         self.wordlcl = self.wordlcl + 1
-        print(p[-1], self.wordlcl)
+        #print(p[-1], self.wordlcl)
         
       if (self.vartype == 'bool'):
         self.dir = self.boollcl
         self.boollcl = self.boollcl + 1
-        print(p[-1], self.boollcl)
-        
+        #print(p[-1], self.boollcl)
       self.vardir.add_var(p[-1], self.dir)
 
     @_('ID e5 assign e6 expression q3 \n')
@@ -195,12 +186,10 @@ class MikuParser(Parser):
 
     @_('')
     def e5(self, p):
-        #print(f'e5 {p[-1]}')
         self.operandos.append(p[-1])
 
     @_('')
     def e6(self, p):
-        #print(f'e6 {p[-1]}')
         self.operadores.append(p[-1])
 
     @_('ASSIGN')
@@ -221,12 +210,14 @@ class MikuParser(Parser):
     def svarcte(self, p):
       self.dir = self.wordcte
       self.wordcte = self.wordcte + 1
+      print(f'214 {p[-1]}')
       self.vardir.add_var(p[-1], self.dir)
 
     @_('')
     def bvarcte(self, p):
       self.dir = self.boolcte
       self.boolcte = self.boolcte + 1
+      print(f'221 {p[-1]}')
       self.vardir.add_var(p[-1], self.dir)
 
     @_('TRUE', 'FALSE')
@@ -247,7 +238,35 @@ class MikuParser(Parser):
                 ro = self.operandos.pop()
                 self.temporal = self.temporal + 1
                 self.operandos.append(self.temporal)
-                myQuad = Quadruple(lo, ro, op, self.temporal)
+                if((self.vardir.get_var_address(lo) >= 1500 and self.vardir.get_var_address(lo) < 2000) or (self.vardir.get_var_address(lo) >= 3000 and self.vardir.get_var_address(lo) < 3500) or (self.vardir.get_var_address(lo) >= 4500 and self.vardir.get_var_address(lo) < 5000)): 
+                  self.lotype = 'number'
+
+                if((self.vardir.get_var_address(lo) >= 500 and self.vardir.get_var_address(lo) < 999) or (self.vardir.get_var_address(lo) >= 2000 and self.vardir.get_var_address(lo) < 2500) or (self.vardir.get_var_address(lo) >= 3500 and self.vardir.get_var_address(lo) < 4000) or (self.vardir.get_var_address(lo) >= 5000 and self.vardir.get_var_address(lo) < 5500)):
+                  self.lotype = 'word'
+
+                if((self.vardir.get_var_address(lo) >= 1000 and self.vardir.get_var_address(lo) < 1500) or (self.vardir.get_var_address(lo) >= 2500 and self.vardir.get_var_address(lo) < 3000) or (self.vardir.get_var_address(lo) >= 4000 and self.vardir.get_var_address(lo) < 4500) or (self.vardir.get_var_address(lo) >= 5500 and self.vardir.get_var_address(lo) < 6000)):
+                  self.lotype = 'bool'
+                  
+                if((self.vardir.get_var_address(ro) >= 1500 and self.vardir.get_var_address(ro) < 2000) or 
+ (self.vardir.get_var_address(ro) >= 3000 and self.vardir.get_var_address(ro) < 3500) or (self.vardir.get_var_address(ro) >= 4500 and self.vardir.get_var_address(ro) < 5000)): 
+                  self.rotype = 'number'
+
+                if((self.vardir.get_var_address(ro) >= 500 and self.vardir.get_var_address(ro) < 1000) or (self.vardir.get_var_address(ro) >= 2000 and self.vardir.get_var_address(ro) < 2500) or (self.vardir.get_var_address(ro) >= 3500 and self.vardir.get_var_address(ro) < 4000) or (self.vardir.get_var_address(ro) >= 5000 and self.vardir.get_var_address(ro) < 5500)):
+                  self.rotype = 'word'
+
+                if((self.vardir.get_var_address(ro) >= 1000 and self.vardir.get_var_address(ro) < 1500) or (self.vardir.get_var_address(ro) >= 2500 and self.vardir.get_var_address(ro) < 3000) or (self.vardir.get_var_address(ro) >= 4000 and self.vardir.get_var_address(ro) < 4500) or (self.vardir.get_var_address(ro) >= 5500 and self.vardir.get_var_address(ro) < 6000)):
+                  self.rotype = 'bool'
+                  
+                #print(self.rotype, self.lotype, op)
+                tipotemp = checkOperator(self.rotype, self.lotype, op)
+                if(tipotemp == 'number'):
+                  myQuad = Quadruple(lo, ro, op, self.numtemp)
+                  self.numtemp = self.numtemp + 1
+                elif(tipotemp == 'word'):
+                  myQuad = Quadruple(lo, ro, op, self.wordtemp)
+                  self.wordtemp = self.wordtemp + 1
+                elif(tipotemp == 'bool'):
+                  self.booltemp = self.booltemp + 1
                 self.quadruples.append(myQuad)
                 self.quadcount = self.quadcount + 1
             else:
@@ -256,7 +275,6 @@ class MikuParser(Parser):
 
     @_('termino term_op e3 termino q1', 'termino q1')
     def exp(self, p):
-        #print(f'exp {p[-1]}')
         return p[-1]
 
     #Punto neuralgico para exp
@@ -274,21 +292,27 @@ class MikuParser(Parser):
                 ro = self.operandos.pop()
                 self.temporal = self.temporal + 1
                 self.operandos.append(self.temporal)
-                if ((self.vardir.get_var_address(lo) >= 0 and self.vardir.get_var_address(lo) < 500) or (self.vardir.get_var_address(lo) >= 1500 and self.vardir.get_var_address(lo) < 2000) or (self.vardir.get_var_address(lo) >= 3000 and self.vardir.get_var_address(lo) < 3500) or (self.vardir.get_var_address(lo) >= 4500 and self.vardir.get_var_address(lo) < 5000)):
-                  lotype = 'number'
-                elif ((self.vardir.get_var_address(lo) >= 500 and self.vardir.get_var_address(lo) < 1000) or (self.vardir.get_var_address(lo) >= 2000 and self.vardir.get_var_address(lo) < 2500) or (self.vardir.get_var_address(lo) >= 3500 and self.vardir.get_var_address(lo) < 4000) or (self.vardir.get_var_address(lo) >= 5000 and self.vardir.get_var_address(lo) < 5500)):
-                  lotype = 'word'
-                else:
-                  lotype = 'bool'
+                if((self.vardir.get_var_address(lo) >= 1500 and self.vardir.get_var_address(lo) < 2000) or (self.vardir.get_var_address(lo) >= 3000 and self.vardir.get_var_address(lo) < 3500) or (self.vardir.get_var_address(lo) >= 4500 and self.vardir.get_var_address(lo) < 5000)): 
+                  self.lotype = 'number'
+
+                if((self.vardir.get_var_address(lo) >= 500 and self.vardir.get_var_address(lo) < 999) or (self.vardir.get_var_address(lo) >= 2000 and self.vardir.get_var_address(lo) < 2500) or (self.vardir.get_var_address(lo) >= 3500 and self.vardir.get_var_address(lo) < 4000) or (self.vardir.get_var_address(lo) >= 5000 and self.vardir.get_var_address(lo) < 5500)):
+                  self.lotype = 'word'
+
+                if((self.vardir.get_var_address(lo) >= 1000 and self.vardir.get_var_address(lo) < 1500) or (self.vardir.get_var_address(lo) >= 2500 and self.vardir.get_var_address(lo) < 3000) or (self.vardir.get_var_address(lo) >= 4000 and self.vardir.get_var_address(lo) < 4500) or (self.vardir.get_var_address(lo) >= 5500 and self.vardir.get_var_address(lo) < 6000)):
+                  self.lotype = 'bool'
                   
-                if ((self.vardir.get_var_address(ro) >= 0 and self.vardir.get_var_address(ro) < 500) or (self.vardir.get_var_address(ro) >= 1500 and self.vardir.get_var_address(ro) < 2000) or (self.vardir.get_var_address(ro) >= 3000 and self.vardir.get_var_address(ro) < 3500) or (self.vardir.get_var_address(ro) >= 4500 and self.vardir.get_var_address(ro) < 5000)):
-                  rotype = 'number'
-                elif ((self.vardir.get_var_address(ro) >= 500 and self.vardir.get_var_address(ro) < 1000) or (self.vardir.get_var_address(ro) >= 2000 and self.vardir.get_var_address(ro) < 2500) or (self.vardir.get_var_address(ro) >= 3500 and self.vardir.get_var_address(ro) < 4000) or (self.vardir.get_var_address(ro) >= 5000 and self.vardir.get_var_address(ro) < 5500)):
-                  rotype = 'word'
-                else:
-                  rotype = 'bool'
-                print(rotype, lotype, op)
-                tipotemp = checkOperator(rotype, lotype, op)
+                if((self.vardir.get_var_address(ro) >= 1500 and self.vardir.get_var_address(ro) < 2000) or 
+ (self.vardir.get_var_address(ro) >= 3000 and self.vardir.get_var_address(ro) < 3500) or (self.vardir.get_var_address(ro) >= 4500 and self.vardir.get_var_address(ro) < 5000)): 
+                  self.rotype = 'number'
+
+                if((self.vardir.get_var_address(ro) >= 500 and self.vardir.get_var_address(ro) < 1000) or (self.vardir.get_var_address(ro) >= 2000 and self.vardir.get_var_address(ro) < 2500) or (self.vardir.get_var_address(ro) >= 3500 and self.vardir.get_var_address(ro) < 4000) or (self.vardir.get_var_address(ro) >= 5000 and self.vardir.get_var_address(ro) < 5500)):
+                  self.rotype = 'word'
+
+                if((self.vardir.get_var_address(ro) >= 1000 and self.vardir.get_var_address(ro) < 1500) or (self.vardir.get_var_address(ro) >= 2500 and self.vardir.get_var_address(ro) < 3000) or (self.vardir.get_var_address(ro) >= 4000 and self.vardir.get_var_address(ro) < 4500) or (self.vardir.get_var_address(ro) >= 5500 and self.vardir.get_var_address(ro) < 6000)):
+                  self.rotype = 'bool'
+                  
+                #print(self.rotype, self.lotype, op)
+                tipotemp = checkOperator(self.rotype, self.lotype, op)
                 if(tipotemp == 'number'):
                   myQuad = Quadruple(lo, ro, op, self.numtemp)
                   self.numtemp = self.numtemp + 1
@@ -321,22 +345,26 @@ class MikuParser(Parser):
                 ro = self.operandos.pop()
                 self.temporal = self.temporal + 1
                 self.operandos.append(self.temporal)
-                if ((self.vardir.get_var_address(lo) >= 0 and self.vardir.get_var_address(lo) < 500) or (self.vardir.get_var_address(lo) >= 1500 and self.vardir.get_var_address(lo) < 2000) or (self.vardir.get_var_address(lo) >= 3000 and self.vardir.get_var_address(lo) < 3500) or (self.vardir.get_var_address(lo) >= 4500 and self.vardir.get_var_address(lo) < 5000)):
-                  lotype = 'number'
-                elif ((self.vardir.get_var_address(lo) >= 500 and self.vardir.get_var_address(lo) < 1000) or (self.vardir.get_var_address(lo) >= 2000 and self.vardir.get_var_address(lo) < 2500) or (self.vardir.get_var_address(lo) >= 3500 and self.vardir.get_var_address(lo) < 4000) or (self.vardir.get_var_address(lo) >= 5000 and self.vardir.get_var_address(lo) < 5500)):
-                  lotype = 'word'
-                else:
-                  lotype = 'bool'
+                if((self.vardir.get_var_address(lo) >= 1500 and self.vardir.get_var_address(lo) < 2000) or (self.vardir.get_var_address(lo) >= 3000 and self.vardir.get_var_address(lo) < 3500) or (self.vardir.get_var_address(lo) >= 4500 and self.vardir.get_var_address(lo) < 5000)): 
+                  self.lotype = 'number'
+
+                if((self.vardir.get_var_address(lo) >= 500 and self.vardir.get_var_address(lo) < 999) or (self.vardir.get_var_address(lo) >= 2000 and self.vardir.get_var_address(lo) < 2500) or (self.vardir.get_var_address(lo) >= 3500 and self.vardir.get_var_address(lo) < 4000) or (self.vardir.get_var_address(lo) >= 5000 and self.vardir.get_var_address(lo) < 5500)):
+                  self.lotype = 'word'
+
+                if((self.vardir.get_var_address(lo) >= 1000 and self.vardir.get_var_address(lo) < 1500) or (self.vardir.get_var_address(lo) >= 2500 and self.vardir.get_var_address(lo) < 3000) or (self.vardir.get_var_address(lo) >= 4000 and self.vardir.get_var_address(lo) < 4500) or (self.vardir.get_var_address(lo) >= 5500 and self.vardir.get_var_address(lo) < 6000)):
+                  self.lotype = 'bool'
                   
-                if ((self.vardir.get_var_address(ro) >= 0 and self.vardir.get_var_address(ro) < 500) or (self.vardir.get_var_address(ro) >= 1500 and self.vardir.get_var_address(ro) < 2000) or (self.vardir.get_var_address(ro) >= 3000 and self.vardir.get_var_address(ro) < 3500) or (self.vardir.get_var_address(ro) >= 4500 and self.vardir.get_var_address(ro) < 5000)):
-                  rotype = 'number'
-                elif ((self.vardir.get_var_address(ro) >= 500 and self.vardir.get_var_address(ro) < 1000) or (self.vardir.get_var_address(ro) >= 2000 and self.vardir.get_var_address(ro) < 2500) or (self.vardir.get_var_address(ro) >= 3500 and self.vardir.get_var_address(ro) < 4000) or (self.vardir.get_var_address(ro) >= 5000 and self.vardir.get_var_address(ro) < 5500)):
-                  rotype = 'word'
-                else:
-                  rotype = 'bool'
-                print(rotype, lotype, op)
-                print(checkOperator(rotype, lotype, op))
-                checkOperator(rotype, lotype, op)
+                if((self.vardir.get_var_address(ro) >= 1500 and self.vardir.get_var_address(ro) < 2000) or 
+ (self.vardir.get_var_address(ro) >= 3000 and self.vardir.get_var_address(ro) < 3500) or (self.vardir.get_var_address(ro) >= 4500 and self.vardir.get_var_address(ro) < 5000)): 
+                  self.rotype = 'number'
+
+                if((self.vardir.get_var_address(ro) >= 500 and self.vardir.get_var_address(ro) < 1000) or (self.vardir.get_var_address(ro) >= 2000 and self.vardir.get_var_address(ro) < 2500) or (self.vardir.get_var_address(ro) >= 3500 and self.vardir.get_var_address(ro) < 4000) or (self.vardir.get_var_address(ro) >= 5000 and self.vardir.get_var_address(ro) < 5500)):
+                  self.rotype = 'word'
+
+                if((self.vardir.get_var_address(ro) >= 1000 and self.vardir.get_var_address(ro) < 1500) or (self.vardir.get_var_address(ro) >= 2500 and self.vardir.get_var_address(ro) < 3000) or (self.vardir.get_var_address(ro) >= 4000 and self.vardir.get_var_address(ro) < 4500) or (self.vardir.get_var_address(ro) >= 5500 and self.vardir.get_var_address(ro) < 6000)):
+                  self.rotype = 'bool'
+
+                checkOperator(self.rotype, self.lotype, op)
                 myQuad = Quadruple(lo, ro, op, self.temporal)
                 self.quadruples.append(myQuad)
                 self.quadcount = self.quadcount + 1
@@ -350,7 +378,11 @@ class MikuParser(Parser):
             if (op == '='):
                 lo = self.operandos.pop()
                 ro = None
-                temp = self.operandos.pop()
+                temp = self.operandos.pop()      
+                print((self.vardir.get_var_address(lo)))
+                if((self.vardir.get_var_address(lo) >= 1500 and self.vardir.get_var_address(lo) < 2000) or (self.vardir.get_var_address(lo) >= 3000 and self.vardir.get_var_address(lo) < 3500) or (self.vardir.get_var_address(lo) >= 4500 and self.vardir.get_var_address(lo) < 5000)): 
+                  self.lotype = 'number'
+                checkOperator(self.rotype, self.lotype, op)
                 myQuad = Quadruple(lo, ro, op, temp)
                 self.quadruples.append(myQuad)
                 self.quadcount = self.quadcount + 1
@@ -437,8 +469,6 @@ class MikuParser(Parser):
 
     @_('ID array')
     def variable(self, p):
-        #print(f'322 {self.vardir}')
-        #print(f'after {self.vardir} {p.ID}')
         return p[0]
 
     @_('OPEN_SQR expression CLOSE_SQR matrix', 'empty')
@@ -484,7 +514,6 @@ class MikuParser(Parser):
         self.conQuad = Quadruple(None, None, 'gotov', None)
         self.returnquad.append(len(self.quadruples))
         self.quadruples.append(self.conQuad)
-        #print(f'if3 {self.conQuad}')
       
     @_('')
     def if4(self, p):
@@ -501,7 +530,6 @@ class MikuParser(Parser):
     @_('')
     def w1(self, p):
       self.jump.append(self.quadcount)
-      #print(self.jump)
 
     @_('')
     def w2(self, p):
@@ -522,7 +550,6 @@ class MikuParser(Parser):
   
     @_('expression q5 log_op e7 expression q5', 'expression q5')
     def con_expression(self, p):
-        ##print(f'con_expression {p[-1]}')
         return p[-1]
 
     @_('')
@@ -538,7 +565,35 @@ class MikuParser(Parser):
                 ro = self.operandos.pop()
                 self.temporal = self.temporal + 1
                 self.operandos.append(self.temporal)
-                myQuad = Quadruple(lo, ro, op, self.temporal)
+                if((self.vardir.get_var_address(lo) >= 1500 and self.vardir.get_var_address(lo) < 2000) or (self.vardir.get_var_address(lo) >= 3000 and self.vardir.get_var_address(lo) < 3500) or (self.vardir.get_var_address(lo) >= 4500 and self.vardir.get_var_address(lo) < 5000)): 
+                  self.lotype = 'number'
+
+                if((self.vardir.get_var_address(lo) >= 500 and self.vardir.get_var_address(lo) < 999) or (self.vardir.get_var_address(lo) >= 2000 and self.vardir.get_var_address(lo) < 2500) or (self.vardir.get_var_address(lo) >= 3500 and self.vardir.get_var_address(lo) < 4000) or (self.vardir.get_var_address(lo) >= 5000 and self.vardir.get_var_address(lo) < 5500)):
+                  self.lotype = 'word'
+
+                if((self.vardir.get_var_address(lo) >= 1000 and self.vardir.get_var_address(lo) < 1500) or (self.vardir.get_var_address(lo) >= 2500 and self.vardir.get_var_address(lo) < 3000) or (self.vardir.get_var_address(lo) >= 4000 and self.vardir.get_var_address(lo) < 4500) or (self.vardir.get_var_address(lo) >= 5500 and self.vardir.get_var_address(lo) < 6000)):
+                  self.lotype = 'bool'
+                  
+                if((self.vardir.get_var_address(ro) >= 1500 and self.vardir.get_var_address(ro) < 2000) or 
+ (self.vardir.get_var_address(ro) >= 3000 and self.vardir.get_var_address(ro) < 3500) or (self.vardir.get_var_address(ro) >= 4500 and self.vardir.get_var_address(ro) < 5000)): 
+                  self.rotype = 'number'
+
+                if((self.vardir.get_var_address(ro) >= 500 and self.vardir.get_var_address(ro) < 1000) or (self.vardir.get_var_address(ro) >= 2000 and self.vardir.get_var_address(ro) < 2500) or (self.vardir.get_var_address(ro) >= 3500 and self.vardir.get_var_address(ro) < 4000) or (self.vardir.get_var_address(ro) >= 5000 and self.vardir.get_var_address(ro) < 5500)):
+                  self.rotype = 'word'
+
+                if((self.vardir.get_var_address(ro) >= 1000 and self.vardir.get_var_address(ro) < 1500) or (self.vardir.get_var_address(ro) >= 2500 and self.vardir.get_var_address(ro) < 3000) or (self.vardir.get_var_address(ro) >= 4000 and self.vardir.get_var_address(ro) < 4500) or (self.vardir.get_var_address(ro) >= 5500 and self.vardir.get_var_address(ro) < 6000)):
+                  self.rotype = 'bool'
+                  
+                #print(self.rotype, self.lotype, op)
+                tipotemp = checkOperator(self.rotype, self.lotype, op)
+                if(tipotemp == 'number'):
+                  myQuad = Quadruple(lo, ro, op, self.numtemp)
+                  self.numtemp = self.numtemp + 1
+                elif(tipotemp == 'word'):
+                  myQuad = Quadruple(lo, ro, op, self.wordtemp)
+                  self.wordtemp = self.wordtemp + 1
+                elif(tipotemp == 'bool'):
+                  self.booltemp = self.booltemp + 1
                 self.quadruples.append(myQuad)
                 self.quadcount = self.quadcount + 1
             else:
@@ -548,30 +603,18 @@ class MikuParser(Parser):
     @_('move_type OPEN_PTH func_call_param CLOSE_PTH')
     def move_func(self, p):
         return p[0]
-        #print(f'move_func {p[0]}')
 
     @_('LEFT', 'RIGHT', 'FORWARD', 'CENTER')
     def move_type(self, p):
         return p[0]
-        #print(f'move_type {p[0]}')
 
     @_('PEN_UP OPEN_PTH CLOSE_PTH \n', 'PEN_DOWN OPEN_PTH CLOSE_PTH \n')
     def pen_func(self, p):
         return p[0]
-        #print(f'pen_func {p[0]}')
-    
-    @_('')
-    def md1(self, p):
-        # Al ultimo entry de self.funcdir setea el .var = vardir
-        self.funcdir.add_func(self.funcid, self.functype, 'varc', self.pcont, 'vart', self.vardir)
-        print(f'ffff {self.vardir}')
-        self.vardir = VarDir()
-        return p[-1]
       
     @_('MAIN fd1 resetvars \n stmnt vd1 END')
     def main(self, p):
         return p[0]
-        #print(f'main {p[0]}')
 
     @_('')
     def empty(self, p):
@@ -586,6 +629,5 @@ if __name__ == '__main__':
     with open(filename) as fp:
         try:
             result = parser.parse(lexer.tokenize(fp.read()))
-            #print(result)
         except EOFError:
             pass

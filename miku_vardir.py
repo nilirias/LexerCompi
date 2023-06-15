@@ -10,7 +10,8 @@ class VarDir:
         return len(self.vars)
 
     def get_var_address(self, name):
-        print('gva',name,self.vars)
+        #print('gva',name,self.vars)
+        #print(f'gva {self.vars}')
         return [var.addr for var in self.vars if var.name == name][0]
 
     def __str__(self):
