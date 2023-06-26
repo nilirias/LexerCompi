@@ -1,10 +1,24 @@
 DRAWING test
-word hola, adios
+
+func word ola(number x, word aa)
+  word b
+  b = aa
+  return x + 1
+end
+
+func number adios(number y)
+  return y - 1
+end
+
 MAIN
   number x
   number y
   number resultado
   number n
+  word hola
+  hola = "abcdf"
+  bool aaa
+  bool bbb
   x = 7
   y = 2
   resultado = x + y

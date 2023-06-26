@@ -11,11 +11,6 @@ class VarDir:
         return len(self.vars)
 
     def get_var_address(self, name):
-        #print('gva',name,self.vars)
-        # print(f'gva {self.vars}')
-        # print(
-        #     f'get_var_address {[var.addr for var in self.vars if var.name == name]}'
-        # )
         return [var.addr for var in self.vars if var.name == name][0]
         # return 4520
 
@@ -32,4 +27,4 @@ class VarDirEntry:
         # self.dim2 = dim2 #matrix
 
     def __str__(self):
-        return f'{self.name} {self.addr}'
+        return f'var dir - name: {self.name} | addr: {self.addr}'

@@ -1,13 +1,12 @@
 DRAWING test
 
+func number fibonacci(number n)
+  if (n == 1)
+    return 1
+  else 
+    return (fibonacci(n)+fibonacci(n-1))
+
 MAIN
-  number x
-  number y
-  x = 8
-  if x == 7
-    x = y + 9 * 7
-  else
-    x = 0
-  END
-  y = 10
+  number n
+  fibonacci(n)
 END

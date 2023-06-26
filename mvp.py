@@ -1,70 +1,45 @@
-dir_memory = [
-  #glbl
-  [ 
-    [0, 499],
-    [500, 999 ],
-    [1000, 1499],
-  ],
-  #lcl
-  [ 
-    [1500, 1999],
-    [2000, 2499],
-    [2500, 2999],
-  ],
-  #cte
-  [
-    [3000, 3499],
-    [3500, 3999],
-    [4000, 4499 ],
-  ],
-]
+from mvp import *
+from miku_lexer import *
+from miku_parser import *
+import sys
 
-# Estructura para validación de límite de memoria 
-# del segmento correspondien
-limitesVarsLocales = [
-  # Normales Temporales
-  [4665, 5500 ], # Enteros
-  [7164, 8000 ], # Flotantes
-  [8666, 9000 ], # Caracteres
-]
+def parse_func_dir(func_dir, outfile):
+    for func_name in func_dir:
+        parsed_str = func_name + ' '
+        for key in func_dir[func_name]:
+            if key == 'params' and func_dir[func_name][key] == '':
+                func_dir[func_name][key] = '-'
+            if key == 'return_type':
+                types = [None, 'int', 'float', 'string', 'bool', 'void']
+                func_dir[func_name][key] = types.index(
+                    func_dir[func_name][key]) - 1
+            parsed_str += str(func_dir[func_name][key]) + ' '
+        outfile.write(parsed_str + '\n')
 
-# Contador de cuántas variables hay cuando estemos en memoria local
-cantVarsLocales = [
-  # Normales Temporales
-  [ 0,     0 ], # Enteros
-  [ 0,     0 ], # Flotantes
-  [ 0,     0 ], # Caracteres
-]
+if __name__ == '__main__':
+  lexer = MikuLexer()
+  parser = MikuParser()
+  filename = 'test_modulos.txt'
 
-# Template que agarra cada función para la estructura de memoria local
-auxLocales = [
-  # Normales Temporales
-  [ [],      [] ], # Enteros
-  [ [],      [] ], # Flotantes
-  [ [],      [] ], # Caracteres
-]
+  if(len(sys.argv) > 1):
+      filename = sys.argv[1]
 
-# Mapa de para guardar toda la memoria
-mapa_memoria = [
-  [ # Globales
-    # Normales Temporales
-    [ [],      [] ], # Enteros
-    [ [],      [] ], # Flotantes
-    [ [],      [] ], # Caracteres
-  ],
-  [], # Locales,
-  [ # Constantes
-    # Normales
-    [ [] ], # Enteros
-    [ [] ], # Flotantes
-    [ [] ], # Caracteres
-  ]
-]
-
-funciones = [] # Guarda temporalmente la información de las funciones
-memoriaFuncionEnProgreso = [] # Guarda las funciones pendientes por procesar
-
-pila_cuadruplos = [] # Stack de cuadruplos pendientes por procesar
-lista_cuadruplos = [] # Guarda todos los cuadruplos a ejecutar
-
-num_cuadruplo = [0] # Cuadruplo que se esta leyendo actualmente
+  with open(filename) as fp:
+      try:
+          program_name, quads = parser.parse(
+              lexer.tokenize(fp.read()))
+          outfile = open(program_name + '.miku', 'w')
+          print(program_name)
+          # parse_func_dir(func_dir, outfile)
+          # outfile.write('#\n')
+          # parse_constant_table(constant_table, outfile)
+          # outfile.write('#\n')
+          print('---------------')
+          for quad in quads:
+              print(str(quad))
+              outfile.write(str(quad) + '\n')
+          print('Code compiled successfully to', program_name + '.miku')
+      except EOFError:
+          pass
+      finally:
+          outfile.close()
