@@ -1,0 +1,7 @@
+[{"name": "MAIN", "ret": 0, "varc": [2, 0, 0], "params": 0, "vart": [1, 0, 0], "addr": 10, "var": [{"name": "y", "addr": 1500, "type": "var"}, {"name": "z", "addr": 1501, "type": "var"}, {"name": 8.0, "addr": 4500, "type": "cte"}, {"name": 10.0, "addr": 4501, "type": "cte"}, {"name": 0.0, "addr": 4502, "type": "cte"}, {"name": 1.0, "addr": 4503, "type": "cte"}, {"name": "t1", "addr": 3000, "type": "temp"}]}]
+GOTO None None 1
+= 4500 None 1500
+= 4501 None 1501
+- 4502 4503 3000
+= 3000 None 1501
+write 1501 None None

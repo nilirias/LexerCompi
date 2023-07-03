@@ -2,12 +2,19 @@ DRAWING test
 
 func word ola(number x, word aa)
   word b
-  b = aa
+  b = "aa"
   return x + 1
 end
 
 func number adios(number y)
+  word z
+  z = "aaaaaa"
+  y = y + 1 * 8 / 2 - 3
   return y - 1
+end
+
+func number jero(number j)
+  return j
 end
 
 MAIN
@@ -19,8 +26,11 @@ MAIN
   hola = "abcdf"
   bool aaa
   bool bbb
+  ola(x, hola)
   x = 7
   y = 2
   resultado = x + y
   n = 8 * (6/2) + 1
+  adios(x)
+  jero(9)
 END
