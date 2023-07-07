@@ -18,6 +18,7 @@ def generateOpCuadruple(self, op):
 
     loDir = self.vardir.get_var_address(lo)
     roDir = self.vardir.get_var_address(ro)
+
     if ((loDir >= 1500 and loDir < 2000) or (loDir >= 3000 and loDir < 3500)
             or (loDir >= 4500 and loDir < 5000)):
         self.lotype = 'number'
@@ -66,6 +67,9 @@ def generateOpCuadruple(self, op):
         self.vardir.add_var(temporal, tempDir, 'cte')
     else:
         self.vardir.add_var(temporal, tempDir, 'var')
+
+    print(f'generateOpCuadruple: {lo} {op} {ro} : {temporal}')
+    print(f'generateOpCuadruple: {loDir} {op} {roDir} : {tempDir}')
 
     myQuad = Quadruple(loDir, roDir, op, tempDir)
 
@@ -339,7 +343,7 @@ class MikuParser(Parser):
     @_('variable getvardir', 'CTE_NUM nvarcte', 'CTE_STR svarcte',
        'cte_bool bvarcte', 'func_call')
     def var_cte(self, p):
-        # print(f'var_cte {p[1]}')
+        print(f'------- var_cte {p[1]}')
         return p[1]
 
     @_('')
@@ -395,12 +399,14 @@ class MikuParser(Parser):
     def cte_bool(self, p):
         return p[0]
 
-    @_('exp rel_op exp q4', 'func_call q4', 'exp q4', 'empty')
+    @_('exp rel_op exp q4 empty', 'func_call q4 empty', 'exp q4 empty')
     def expression(self, p):
+        print('--- expression')
         return p[0]
 
     @_('')
     def q4(self, p):
+        print(f'---- q4 {self.operadores}')
         while len(self.operadores) > 0:
             op = self.operadores.pop()
             if (op == '>' or op == '<' or op == '<=' or op == '>='
@@ -412,18 +418,19 @@ class MikuParser(Parser):
 
     @_('termino term_op e3 termino q1', 'termino q1')
     def exp(self, p):
-        # print('exp')
+        print('---- exp')
         return p[0]
 
     #Punto neuralgico para exp
     @_('')
     def e3(self, p):
-        # print(f'e3 {p[-1]}')
+        print(f'----- e3 {p[-1]}')
         self.operadores.append(p[-1])
 
     #quads suma resta
     @_('')
     def q2(self, p):
+        print(f'------ q2 {self.operadores}')
         while len(self.operadores) > 0:
             op = self.operadores.pop()
             if (op == '*' or op == '/'):
@@ -434,19 +441,19 @@ class MikuParser(Parser):
 
     @_('SUM', 'SUB')
     def term_op(self, p):
-        # print('term_op')
+        print('----- term_op')
         return p[0]
 
     @_('factor fact_op e2 factor q2', 'factor q2')
     def termino(self, p):
-        # print('termino')
+        print('----- termino')
         return p[0]
 
 #quads mult div
 
     @_('')
     def q1(self, p):
-        # print('q1')
+        print(f'----- q1 {self.operadores}')
         if (len(self.operadores) > 0):
             op = self.operadores.pop()
             if (op == '+' or op == '-'):
@@ -472,20 +479,23 @@ class MikuParser(Parser):
     #Punto neuralgico para terminos
     @_('')
     def e2(self, p):
+        print('------ e2')
         self.operadores.append(p[-1])
 
     @_('MULT', 'DIV')
     def fact_op(self, p):
-        # print('factor_op')
+        print('------ factor_op')
         return p[0]
 
-    @_('open_pth expression close_pth', 'var_cte e1', 'expression')
+    @_('open_pth expression close_pth', 'var_cte e1')
     def factor(self, p):
+        print('------ factor')
         return p[0]
 
     #Punto neuralgico para todos los operandos
     @_('')
     def e1(self, p):
+        print(f'------- e1 {p[-1]}')
         if (p[-1] != None):
             self.operandos.append(p[-1])
         else:
@@ -505,11 +515,13 @@ class MikuParser(Parser):
 
     @_('AND', 'OR')
     def log_op(self, p):
+        print('--- log_op')
         return p[0]
 
     @_('LESS_THAN', 'MORE_THAN', 'DIFFERENT_TO', 'LESS_OR_EQ_THAN',
        'MORE_OR_EQ_THAN', 'EQUAL_TO')
     def rel_op(self, p):
+        print('---- rel_op', p[-1])
         self.operadores.append(p[-1])
 
     @_('ID func1 OPEN_PTH func_call_param CLOSE_PTH func3 \n')
@@ -578,19 +590,20 @@ class MikuParser(Parser):
 
     @_('')
     def wr2(self, p):
-
         lo = self.operandos.pop()
         loDir = self.vardir.get_var_address(lo)
         self.myQuad = Quadruple(loDir, None, 'write', None)
         self.quadruples.append(self.myQuad)
-        print(self.myQuad)
+        #print(self.myQuad)
 
     @_('IF con_expression if1 \n stmnt if2 else_stmnt')
     def if_stmnt(self, p):
+        print('- if_stmnt')
         return p[0]
 
     @_('')
     def if1(self, p):
+        print('-- if1')
         self.gotofdir = self.quadcount
         self.conQuad = Quadruple(None, None, 'gotof', None)
         self.returnquad.append(len(self.quadruples))
@@ -598,28 +611,33 @@ class MikuParser(Parser):
 
     @_('')
     def if2(self, p):
-        self.operandos.append(self.temporal)
-        self.conQuad = Quadruple(self.operandos.pop(), None, 'gotof',
-                                 self.jump.pop())
+        print('-- if2')
+        # self.operandos.append(self.temporal)
+        valor = self.vardir.get_var_address(f't{self.temporal}')
+        print(f'if2... {valor}')
+        self.conQuad = Quadruple(valor, None, 'gotof', self.jump.pop())
         idx = self.returnquad.pop()
         self.quadruples[idx] = self.conQuad
 
-    @_('\n ELSE if3 \n stmnt if4 END \n', '\n if4 END \n')
+    @_('\n ELSE if3 \n stmnt if4 END \n', '\n END \n')
     def else_stmnt(self, p):
+        print('-- else_stmnt')
         return p[0]
 
     @_('')
     def if3(self, p):
-        self.conQuad = Quadruple(None, None, 'gotov', None)
+        print('--- if3')
+        self.conQuad = Quadruple(None, None, 'goto', None)
         self.returnquad.append(len(self.quadruples))
         self.quadruples.append(self.conQuad)
 
     @_('')
     def if4(self, p):
+        print('--- if4')
         #print(self.quadcount)
         self.jump.append(self.quadcount)
         self.operandos.append(self.temporal)
-        self.conQuad = Quadruple(self.operandos.pop(), None, 'gotov',
+        self.conQuad = Quadruple(self.operandos.pop(), None, 'goto',
                                  self.jump.pop())
         idx = self.returnquad.pop()
         self.quadruples[idx] = self.conQuad
@@ -652,15 +670,17 @@ class MikuParser(Parser):
 
     @_('expression log_op e7 expression q5', 'expression q5')
     def con_expression(self, p):
-        print('expression')
+        print('-- con_expression')
         return p[-1]
 
     @_('')
     def e7(self, p):
+        print(f'--- e7 {p[-1]}')
         self.operadores.append(p[-1])
 
     @_('')
     def q5(self, p):
+        print('--- q5')
         while len(self.operadores) > 0:
             op = self.operadores.pop()
             if (op.lower() == 'and' or op.lower() == 'or'):

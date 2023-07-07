@@ -28,5 +28,5 @@ class FuncDirEntry:
 
     def __str__(self):
       # print('vardirentry.__str__', json.dumps({'name': self.name, 'addr': self.addr}))
-      print('vardirentry.__str__', json.dumps({'name': self.name, 'ret': self.ret, 'varc': self.varc, 'params': self.params, 'vart': self.vart, 'addr': self.addr, 'var': str(self.var)}))
+      #print('vardirentry.__str__', json.dumps({'name': self.name, 'ret': self.ret, 'varc': self.varc, 'params': self.params, 'vart': self.vart, 'addr': self.addr, 'var': str(self.var)}))
       return json.dumps({'name': self.name, 'ret': self.ret, 'varc': self.varc, 'params': self.params, 'vart': self.vart, 'addr': self.addr, 'var': json.loads(str(self.var))})

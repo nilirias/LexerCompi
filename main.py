@@ -7,8 +7,8 @@ from read import run_vm
 if __name__ == '__main__':
     lexer = MikuLexer()
     parser = MikuParser()
-    filename = 'test_sumas.txt'
-    print(f'compilando miku - {filename}')
+    filename = 'test_suma_variables.txt'
+    print(f'Compilando Miku - {filename}')
     success = False
 
     if (len(sys.argv) > 1):
@@ -32,5 +32,5 @@ if __name__ == '__main__':
             outfile.close()
 
     if (success):
-        print("Running vm...\n\n")
+        print("Running vm...\n. \n. \n.")
         run_vm()

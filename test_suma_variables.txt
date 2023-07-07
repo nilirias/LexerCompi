@@ -6,4 +6,12 @@ MAIN
   y = 10
   x = 5
   z = x + y
+  
+  if z == 15
+    write(z)
+  else
+    write(y)
+  end
+
+  write(x)
 END

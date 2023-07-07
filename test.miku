@@ -1,7 +1,12 @@
-[{"name": "MAIN", "ret": 0, "varc": [2, 0, 0], "params": 0, "vart": [1, 0, 0], "addr": 10, "var": [{"name": "y", "addr": 1500, "type": "var"}, {"name": "z", "addr": 1501, "type": "var"}, {"name": 8.0, "addr": 4500, "type": "cte"}, {"name": 10.0, "addr": 4501, "type": "cte"}, {"name": 0.0, "addr": 4502, "type": "cte"}, {"name": 1.0, "addr": 4503, "type": "cte"}, {"name": "t1", "addr": 3000, "type": "temp"}]}]
+[{"name": "MAIN", "ret": 0, "varc": [3, 0, 0], "params": 0, "vart": [1, 0, 1], "addr": 18, "var": [{"name": "y", "addr": 1500, "type": "var"}, {"name": "x", "addr": 1501, "type": "var"}, {"name": "z", "addr": 1502, "type": "var"}, {"name": 10.0, "addr": 4500, "type": "cte"}, {"name": 5.0, "addr": 4501, "type": "cte"}, {"name": "t1", "addr": 3000, "type": "temp"}, {"name": 15.0, "addr": 4502, "type": "cte"}, {"name": "t2", "addr": 4000, "type": "temp"}]}]
 GOTO None None 1
 = 4500 None 1500
 = 4501 None 1501
-- 4502 4503 3000
-= 3000 None 1501
++ 1501 1500 3000
+= 3000 None 1502
+== 1502 4502 4000
+gotof 4000 None 8
+write 1502 None None
+goto 2 None 10
+write 1500 None None
 write 1501 None None

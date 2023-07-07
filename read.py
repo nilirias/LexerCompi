@@ -131,6 +131,14 @@ def run_vm():
             elif (op == "write"):
                 print(memories[get_var_type_memory(
                     int(left))].get_value_of_address(int(left)))
+            elif (op == "gotof"):
+                print("gotof :)))")
+                if (not memories[get_var_type_memory(
+                        int(left))].get_value_of_address(int(left))):
+                    ip = int(res) - 1
+            elif (op == "goto"):
+                print("goto :)))")
+                ip = int(res) - 1
             ip += 1
 
 
