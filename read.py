@@ -28,21 +28,37 @@ class Memory:
 
     def get_value_of_address(self, address):
         # print(f'get_value_of_address address: {address} | {self.memoryType}')
-        if address > dir_memoria[self.memoryType][2]:
+        # print(
+        #     f'get_value_of_address address: {self.bools} | {self.strings} | {self.ints}'
+        # )
+        if address >= dir_memoria[self.memoryType][2]:
             return self.bools[address - dir_memoria[self.memoryType][2]]
-        elif address > dir_memoria[self.memoryType][1]:
+        elif address >= dir_memoria[self.memoryType][1]:
             return self.strings[address - dir_memoria[self.memoryType][1]]
         else:
             return self.ints[address - dir_memoria[self.memoryType][0]]
 
     def set_value_in_address(self, address, value):
-        # print(f'set_value_in_address address: {address} | {value}')
-        if address > dir_memoria[self.memoryType][2]:
-            self.bools[address % dir_memoria[self.memoryType][2]] = value
-        elif address > dir_memoria[self.memoryType][1]:
-            self.strings[address % dir_memoria[self.memoryType][1]] = value
+        # print("--------------------------------")
+        # print(
+        #     f'set_value_in_address address: {address} | {value} | {self.memoryType}'
+        # )
+        # print(
+        #     f'set_value_in_address address: {dir_memoria[self.memoryType][2]} | {dir_memoria[self.memoryType][1]} | {dir_memoria[self.memoryType][0]}'
+        # )
+        # print(
+        #     f'set_value_in_address address: {self.bools} | {self.strings} | {self.ints}'
+        # )
+        if address >= dir_memoria[self.memoryType][2]:
+            self.bools[address - dir_memoria[self.memoryType][2]] = value
+        elif address >= dir_memoria[self.memoryType][1]:
+            self.strings[address - dir_memoria[self.memoryType][1]] = value
         else:
-            self.ints[address % dir_memoria[self.memoryType][0]] = value
+            self.ints[address - dir_memoria[self.memoryType][0]] = value
+        # print(
+        #     f'set_value_in_address address: {self.bools} | {self.strings} | {self.ints}'
+        # )
+        # print("--------------------------------")
 
 
 def filter_ctes(cte):
@@ -99,7 +115,8 @@ def run_vm():
         while (ip < len(quads)):
             # print(f'------- cuadruplo | {quads[ip]}')
             op, left, right, res = quads[ip].strip().split()
-            if (op == '+' or op == '-' or op == '*' or op == '/'):
+            if (op == '+' or op == '-' or op == '*' or op == '/' or op == '=='
+                    or op == ">" or op == "<" or op == ">=" or op == "<="):
                 leftInt = int(left)
                 rightInt = int(right)
                 resInt = int(res)
@@ -116,6 +133,16 @@ def run_vm():
                     value = valueLeft * valueRight
                 elif op == "/":
                     value = valueLeft / valueRight
+                elif op == "==":
+                    value = valueLeft == valueRight
+                elif op == ">":
+                    value = valueLeft > valueRight
+                elif op == "<":
+                    value = valueLeft < valueRight
+                elif op == ">=":
+                    value = valueLeft >= valueRight
+                elif op == "<=":
+                    value = valueLeft <= valueRight
 
                 # print("value", op, valueLeft, valueRight, value)
 
@@ -132,13 +159,17 @@ def run_vm():
                 print(memories[get_var_type_memory(
                     int(left))].get_value_of_address(int(left)))
             elif (op == "gotof"):
-                print("gotof :)))")
+                # print(f"gotof {ip}")
                 if (not memories[get_var_type_memory(
                         int(left))].get_value_of_address(int(left))):
+                    # print(f"cambiar {ip}")
                     ip = int(res) - 1
+                # print(f'gotof {ip}')
+
             elif (op == "goto"):
-                print("goto :)))")
+                # print(f'goto {ip}')
                 ip = int(res) - 1
+                # print(f'goto {ip}')
             ip += 1
 
 

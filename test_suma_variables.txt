@@ -5,12 +5,20 @@ MAIN
   number z
   y = 10
   x = 5
-  z = x + y
+  z = x + y * 10 * 9 + 1
+
+  write("--")
+  write(z)
+  write("--")
   
-  if z == 15
-    write(z)
+  if z == 905
+    write("wiiii")
+    write("wiiii")
+    write("wiiii")
   else
-    write(y)
+    write("unu")
+    write("unu")
+    write("unu")
   end
 
   write(x)
