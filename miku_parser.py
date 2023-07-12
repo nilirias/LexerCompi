@@ -9,7 +9,7 @@ from miku_semanticcube import checkOperator
 
 
 def addVarCte(self, varType, var):
-    # print('| addVarCte |')
+    # print(f'| addVarCte {varType} - {var} |')
     if (not self.vardir.check_if_var_exists(var)):
         if varType == "num":
             self.dir = self.numcte
@@ -135,6 +135,8 @@ class MikuParser(Parser):
     funcquaddir = 0
     maindir = ''
     gotofdir = 0
+    listparams = []
+    paramCont = 0
 
     funcdir = FuncDir()
     vardir = VarDir()
@@ -220,19 +222,21 @@ class MikuParser(Parser):
 
     @_('NUMBER', 'WORD', 'BOOL')
     def var_type(self, p):
+        # print('--var_type', p[0])
         return p[0]
 
     @_(
         'FUNC resetvars func_type ftr ID fd1 OPEN_PTH parameter eracont CLOSE_PTH \n stmnt vd1 resettemp resetvarc END \n func_declaration',
         'empty')
     def func_declaration(self, p):
-        print(f'-- func_declaration {p[-1]}')
+        # print(f'-- func_declaration {p[-1]}')
         return p[-1]
 
     @_('')
     def eracont(self, p):
         self.funcparamcont = self.funcparamcont + 1
-        # print(f'--- eracont {self.funcparamcont}')
+        # self.listparams.append(p[-1])
+        print(f'--- eracont {self.listparams}')
 
     @_('')
     def resetvarc(self, p):
@@ -247,6 +251,9 @@ class MikuParser(Parser):
         self.wordlcl = 2000
         self.boollcl = 2500
 
+        self.funcparamcont = 0
+        self.listparams = []
+
     @_('')
     def resettemp(self, p):
         # print('--- resettemp')
@@ -258,12 +265,12 @@ class MikuParser(Parser):
     # function id
     @_('')
     def fd1(self, p):
-        print('fd1', self.quadcount)
+        # print('fd1', self.quadcount)
         self.funcid = p[-1]
         self.funcquad = self.quadcount
 
         if (self.functype == 2 or self.functype == 3 or self.functype == 4):
-            print('--fd1')
+            # print('--fd1')
 
             if (self.functype == 2):
                 type = 'number'
@@ -277,11 +284,12 @@ class MikuParser(Parser):
 
     @_('')
     def vd1(self, p):
-        print(f'-------------------- vd1')
-        print(f'| {self.funcid} {self.quadcount} {self.funcquad}')
+        # print(f'-------------------- vd1')
+        # print(f'| {self.funcid} {self.varc}')
+        # print(f'-------------------- vd1')
         self.funcdir.add_func(self.funcid, self.functype, self.varc,
-                              self.pcont, self.vart, self.funcaddr,
-                              self.funcquad, self.vardir)
+                              self.pcont, self.listparams, self.vart,
+                              self.funcaddr, self.funcquad, self.vardir)
         self.vardir = VarDir()
         return p[-1]
 
@@ -307,7 +315,7 @@ class MikuParser(Parser):
 
     @_('var_type addvartype ID varid multiple_parameters', 'empty')
     def parameter(self, p):
-        # print(f'--- parameters')
+        print(f'--- parameter')
         self.pcont = self.pcont + 1
         return p[0]
 
@@ -341,10 +349,12 @@ class MikuParser(Parser):
 
     @_('var_type addvartype ID varid multiple_vars \n')
     def var_declaration_func(self, p):
+        # print('var_declaration_func', p[0])
         return p[0]
 
     @_('')
     def varid(self, p):
+        print(f'--varid {p[-1]} {self.vartype}')
         if (self.vartype == 'number'):
             self.dir = self.numlcl
             self.numlcl = self.numlcl + 1
@@ -361,7 +371,8 @@ class MikuParser(Parser):
             self.varc[2] += 1
 
         self.vardir.add_var(p[-1], self.dir, 'var')
-        self.ctedir.add_cte(p[-1], self.dir)
+        self.listparams.append(self.vardir.get_var(p[-1]))
+        # self.ctedir.add_cte(p[-1], self.dir)
 
     @_('ID e5 assign e6 expression q3 \n')
     def var_assignation(self, p):
@@ -540,6 +551,7 @@ class MikuParser(Parser):
     @_('ID func1 OPEN_PTH func_call_param CLOSE_PTH func3 \n')
     def func_call(self, p):
         # print(f'func_call {p.ID} {p[-1]}')
+        self.paramCont = 0
         self.id = p.ID
         return p[-1]
 
@@ -547,8 +559,11 @@ class MikuParser(Parser):
     @_('')
     def func1(self, p):
         self.id = p[-1]
+        self.operadores.append('(')
+        # print(f'func1 {self.id}')
         myQuad = Quadruple(None, None, 'ERA',
-                           self.funcparamcont)  #ERA | | | SIZE
+                           self.funcdir.get_func_quad(
+                               self.id))  #ERA | | | SIZE
         self.quadruples.append(myQuad)
         self.quadcount = self.quadcount + 1
         # print(f'- func1 {self.quadcount}')
@@ -560,12 +575,17 @@ class MikuParser(Parser):
 
     @_('')
     def func2(self, p):
-        # print(f'-- func2 {self.operandos}')
-        self.paramCont = self.paramCont + 1
+        print(
+            f'-- func2 {len(self.funcdir.get_func(self.id).params)} {self.paramCont}'
+        )
+        funcparam = self.funcdir.get_func(self.id).params[self.paramCont]
+        # [var for var in self.vars if var.name == name][0]
+        print(f'-- func2 {funcparam} {type(funcparam)}')
+        self.paramCont += 1
         param = self.operandos.pop()
         paramdir = self.vardir.get_var_address(param)
         paramQuad = Quadruple(paramdir, None, 'PARAM',
-                              self.paramCont)  # PARAM | ADDR | | #PARAM
+                              funcparam.get_addr())  # PARAM | ADDR | | #PARAM
         self.quadruples.append(paramQuad)
         self.quadcount = self.quadcount + 1
 
@@ -579,6 +599,7 @@ class MikuParser(Parser):
         self.quadcount += 1
         # print(self.funcdir.get_func_type(self.id))
         functype = self.funcdir.get_func_type(self.id)
+        
         if (functype == 2 or functype == 3 or functype == 4):
             if (functype == 2):
                 type = 'number'
@@ -593,6 +614,7 @@ class MikuParser(Parser):
                                tempDir)
             self.quadruples.append(myQuad)
             self.quadcount += 1
+        self.operadores.pop()
 
     @_('COMMA func_call_param', 'empty')
     def multiple_fc_param(self, p):
@@ -618,6 +640,7 @@ class MikuParser(Parser):
 
     @_('COMMA variable varid multiple_vars', 'empty')
     def multiple_vars(self, p):
+        # print('multiple_vars')
         return p[0]
 
     @_('WRITE OPEN_PTH expression CLOSE_PTH wr2 \n')

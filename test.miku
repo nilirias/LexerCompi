@@ -1,13 +1,22 @@
-[{"name": "suma", "ret": 2, "varc": [2, 1, 0], "params": 2, "vart": [2, 0, 0], "addr": 0, "quad": 1, "var": [{"name": "suma", "addr": 0, "type": "func"}, {"name": "a", "addr": 1500, "type": "var"}, {"name": "b", "addr": 1501, "type": "var"}, {"name": "c", "addr": 2000, "type": "var"}, {"name": "t1", "addr": 3000, "type": "temp"}]}, {"name": "MAIN", "ret": 0, "varc": [1, 0, 0], "params": 2, "vart": [2, 0, 0], "addr": 1, "quad": 4, "var": [{"name": "MAIN", "addr": 1, "type": "func"}, {"name": "x", "addr": 1500, "type": "var"}, {"name": 1.0, "addr": 4500, "type": "cte"}, {"name": 2.0, "addr": 4501, "type": "cte"}, {"name": "t2", "addr": 3000, "type": "temp"}]}]
-[2, 0, 0]
-goto None None 4
+[{"name": "suma", "ret": 2, "varc": [3, 0, 0], "paramcount": 2, "params": "[{\"name\": \"a\", \"addr\": 1500, \"type\": \"var\"}, {\"name\": \"b\", \"addr\": 1501, \"type\": \"var\"}, {\"name\": \"c\", \"addr\": 1502, \"type\": \"var\"}]", "vart": [5, 0, 0], "addr": 0, "quad": 1, "var": [{"name": "suma", "addr": 0, "type": "func"}, {"name": "a", "addr": 1500, "type": "var"}, {"name": "b", "addr": 1501, "type": "var"}, {"name": "c", "addr": 1502, "type": "var"}, {"name": "t1", "addr": 3000, "type": "temp"}]}, {"name": "suma2", "ret": 2, "varc": [3, 0, 0], "paramcount": 4, "params": "[{\"name\": \"a\", \"addr\": 1500, \"type\": \"var\"}, {\"name\": \"b\", \"addr\": 1501, \"type\": \"var\"}, {\"name\": \"c\", \"addr\": 1502, \"type\": \"var\"}]", "vart": [5, 0, 0], "addr": 1, "quad": 4, "var": [{"name": "suma2", "addr": 1, "type": "func"}, {"name": "a", "addr": 1500, "type": "var"}, {"name": "b", "addr": 1501, "type": "var"}, {"name": "c", "addr": 1502, "type": "var"}, {"name": "t2", "addr": 3000, "type": "temp"}]}, {"name": "MAIN", "ret": 0, "varc": [1, 0, 0], "paramcount": 4, "params": "[{\"name\": \"x\", \"addr\": 1500, \"type\": \"var\"}]", "vart": [5, 0, 0], "addr": 2, "quad": 7, "var": [{"name": "MAIN", "addr": 2, "type": "func"}, {"name": "x", "addr": 1500, "type": "var"}, {"name": 1.0, "addr": 4500, "type": "cte"}, {"name": 2.0, "addr": 4501, "type": "cte"}, {"name": "t3", "addr": 3000, "type": "temp"}, {"name": "t4", "addr": 3001, "type": "temp"}, {"name": "t5", "addr": 3002, "type": "temp"}]}]
+[3, 0, 0]
+goto None None 7
 + 1500 1501 3000
-= 3000 None 2000
-return 2000 None 0
+= 3000 None 1502
+return 1502 None 0
++ 1500 1501 3000
+= 3000 None 1502
+return 1502 None 1
 ERA None None 1
-PARAM 4500 None 1
-PARAM 4501 None 2
+PARAM 4500 None 1500
+PARAM 4501 None 1501
 GOSUB suma None 1
 = 0 None 3000
-= 3000 None 1500
+ERA None None 4
+PARAM 4500 None 1500
+PARAM 4501 None 1501
+GOSUB suma2 None 4
+= 1 None 3001
++ 3000 3001 3002
+= 3002 None 1500
 write 1500 None None

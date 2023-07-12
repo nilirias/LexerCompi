@@ -1,16 +1,21 @@
 DRAWING test
 
 func number suma(number a, number b)
-  word c
+  number c
   c = a + b
   return c
 end
 
+func number suma2(number a, number b)
+  number c
+  c = a + b
+  return c
+end
 
 MAIN
   number x
-   x = suma(1, 2)
+  x = suma(1, 2) + suma2(1, 2)
 
-   write(x)
+  write(x)
 
 END

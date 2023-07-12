@@ -63,6 +63,7 @@ class Memory:
 
 # var globales
 memories = []
+pila_cuadruplos = []
 
 
 def filter_ctes(cte):
@@ -99,68 +100,24 @@ def setValueInAddress(address, value):
 
 
 def era(funcdir, funcion):
-    print('era')
-    # print(funcdir)
-    print(funcdir[funcion - 1])
-    # print(funcion)
-    # memories.append(deepcopy(auxLocales))
-    # lcl_var_mem = [
-    #     Memory(funcdir[-1]['varc'][0], funcdir[-1]['varc'][1],
-    #            funcdir[-1]['varc'][2], 1)
-    # ]
-    # tmp_var_mem = [
-    #     Memory(funcdir[-1]['vart'][0], funcdir[-1]['vart'][1],
-    #            funcdir[-1]['vart'][2], 2)
-    # ]
+    # print('era', funcion)
+    func = [func for func in funcdir if func['quad'] == funcion][0]
+    lclmem = Memory(func['varc'][0], func['varc'][1], func['varc'][2], 1)
+    tempmem = Memory(func['vart'][0], func['vart'][1], func['vart'][2], 2)
 
-# # Busca la función indicada en ejecución
-# for i in range(len(funciones)):
-#   # Prepara memoria temporal local con valores leídos del .txt
-#   if funciones[i][0][2] == funcion:
-#     cntIntNormal   =  funciones[i][1][0]
-#     cntIntTemp     =  funciones[i][1][1]
-#     cntFloatNormal =  funciones[i][2][0]
-#     cntFloatTemp   =  funciones[i][2][1]
-#     cntCharNormal  =  funciones[i][3][0]
-#     cntCharTemp    =  funciones[i][3][1]
+    memories[1].append(lclmem)
+    memories[2].append(tempmem)
 
-#     cantVarsLocales[0][0] += cntIntNormal
-#     cantVarsLocales[0][1] += cntIntTemp
-#     cantVarsLocales[1][0] += cntFloatNormal
-#     cantVarsLocales[1][1] += cntFloatTemp
-#     cantVarsLocales[2][0] += cntCharNormal
-#     cantVarsLocales[2][1] += cntCharTemp
 
-#     # Checan que cada segmento no exceda el límite de memoria definido
-#     if cantVarsLocales[0][0] >= limitesVarsLocales[0][0] - dir_memoria[1][0][0]:
-#       print("Se excedió la memoria disponibles para enteros dentro del contexto local")
-#       sys.exit()
-#     if cantVarsLocales[0][1] >= limitesVarsLocales[0][1] - dir_memoria[1][0][1]:
-#       print("Se excedió la memoria disponibles para enteros termporales dentro del contexto local")
-#       sys.exit()
-#     if cantVarsLocales[1][0] >= limitesVarsLocales[1][0] - dir_memoria[1][1][0]:
-#       print("Se excedió la memoria disponibles para flotantes dentro del contexto local")
-#       sys.exit()
-#     if cantVarsLocales[1][1] >= limitesVarsLocales[1][1] - dir_memoria[1][1][1]:
-#       print("Se excedió la memoria disponibles para flotantes termporales dentro del contexto local")
-#       sys.exit()
-#     if cantVarsLocales[2][0] >= limitesVarsLocales[2][0] - dir_memoria[1][2][0]:
-#       print("Se excedió la memoria disponibles para caracter dentro del contexto local")
-#       sys.exit()
-#     if cantVarsLocales[2][1] >= limitesVarsLocales[2][1] - dir_memoria[1][2][1]:
-#       print("Se excedió la memoria disponibles para caracter termporales dentro del contexto local")
-#       sys.exit()
+def param(valorAddr, destinoAddr):
+    type = get_var_type_memory(valorAddr)
+    # print(' param' ,type, memories[3].ints)
+    if type == 1 or type == 2:
+        valor = memories[type][-2].get_value_of_address(valorAddr)
+    else:
+        valor = memories[type].get_value_of_address(valorAddr)
 
-#     # Inicializa la cantidad de memoria requerida por la función,
-#     # no más, no menos
-#     memoriaFuncionEnProgreso[len(memoriaFuncionEnProgreso) - 1][0][0] = [None] * int(cntIntNormal)
-#     memoriaFuncionEnProgreso[len(memoriaFuncionEnProgreso) - 1][0][1] = [None] * int(cntIntTemp)
-#     memoriaFuncionEnProgreso[len(memoriaFuncionEnProgreso) - 1][1][0] = [None] * int(cntFloatNormal)
-#     memoriaFuncionEnProgreso[len(memoriaFuncionEnProgreso) - 1][1][1] = [None] * int(cntFloatTemp)
-#     memoriaFuncionEnProgreso[len(memoriaFuncionEnProgreso) - 1][2][0] = [None] * int(cntCharNormal)
-#     memoriaFuncionEnProgreso[len(memoriaFuncionEnProgreso) - 1][2][1] = [None] * int(cntCharTemp)
-#     return
-#   i += 1
+    memories[1][-1].set_value_in_address(destinoAddr, valor)
 
 
 def run_vm():
@@ -171,9 +128,10 @@ def run_vm():
         funcdir = json.loads(f.readline().strip())
         varg = json.loads(f.readline().strip())
 
-        print(f'varg {varg}')
+        # print(f'varg {varg}')
+        # print(f'funcdir {funcdir}')
 
-        ctes = list(filter(filter_ctes, funcdir[0]['var']))
+        ctes = list(filter(filter_ctes, funcdir[-1]['var']))
 
         ctesEra = [0, 0, 0]
         for s in ctes:
@@ -197,6 +155,7 @@ def run_vm():
                    funcdir[-1]['vart'][2], 2)
         ]
         cte_var_mem = Memory(ctesEra[0], ctesEra[1], ctesEra[2], 3)
+        # print('cte_var_mem', cte_var_mem.insert_bools, ctesEra)
 
         # print("-------- llenando memoria constantes")
         for s in ctes:
@@ -210,7 +169,7 @@ def run_vm():
         memories.append(cte_var_mem)
 
         while (ip < len(quads)):
-            # print(f'------- cuadruplo | {quads[ip]}')
+            print(f'------- cuadruplo | {quads[ip]}')
             op, left, right, res = quads[ip].strip().split()
             if (op == '+' or op == '-' or op == '*' or op == '/' or op == '=='
                     or op == ">" or op == "<" or op == ">=" or op == "<="):
@@ -265,6 +224,17 @@ def run_vm():
                 # print(f'goto {ip}')
             elif (op == 'ERA'):
                 era(funcdir, int(res))
+            elif (op == 'PARAM'):
+                param(int(left), int(res))
+                # print('param', getValueFromAddress(int(res)))
+            elif (op == 'GOSUB'):
+                pila_cuadruplos.append(ip)
+                ip = int(res) - 1
+            elif (op == 'return'):
+                setValueInAddress(int(res), getValueFromAddress(int(left)))
+                ip = pila_cuadruplos.pop()
+                memories[1].pop()
+                memories[2].pop()
             else:
                 print(f'| missing cuadruplo {quads[ip]} |')
             ip += 1

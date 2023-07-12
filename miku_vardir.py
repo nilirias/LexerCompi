@@ -10,6 +10,9 @@ class VarDir:
         if all(entry.name != name for entry in self.vars):
             self.vars.append(VarDirEntry(name, addr, type))
 
+    def get_var(self, name):
+        return [var for var in self.vars if var.name == name][0]
+
     def var_count(self):
         return len(self.vars)
 
@@ -32,6 +35,9 @@ class VarDirEntry:
         self.type = type
         # self.dim1 = dim1 #array
         # self.dim2 = dim2 #matrix
+
+    def get_addr(self):
+        return self.addr
 
     def __str__(self):
         return json.dumps({

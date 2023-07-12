@@ -7,12 +7,18 @@ class FuncDir:
     def __init__(self):
         self.funcs = []
 
-    def add_func(self, name, ret, varc, params, vart, addr, quad, var):
+    def add_func(self, name, ret, varc, paramcount, params, vart, addr, quad,
+                 var):
         self.funcs.append(
-            FuncDirEntry(name, ret, varc, params, vart, addr, quad, var))
+            FuncDirEntry(name, ret, varc, paramcount, params, vart, addr, quad,
+                         var))
+
+    def get_func(self, name):
+        # print('get_func_addr', name, self.funcs)
+        return [func for func in self.funcs if func.name == name][0]
 
     def get_func_addr(self, name):
-        print('get_func_addr', name, self.funcs)
+        # print('get_func_addr', name, self.funcs)
         return [func.addr for func in self.funcs if func.name == name][0]
 
     def get_func_quad(self, name):
@@ -29,11 +35,13 @@ class FuncDir:
 
 class FuncDirEntry:
 
-    def __init__(self, name, ret, varc, params, vart, addr, quad, var):
+    def __init__(self, name, ret, varc, paramcount, params, vart, addr, quad,
+                 var):
         self.name = name  #function name
         self.ret = ret  #return type | 0 for main | 1 for void | 2 for number | 3 for word | 4 for bool
         self.varc = varc  #count of variables (how many variables it has) [numbers, words, bools]
-        self.params = params  #count of parameters
+        self.paramcount = paramcount  #count of parameters
+        self.params = params  #list of parameters
         self.vart = vart  #count of temporary variables
         self.addr = addr  #direccion de memoria para el return
         self.quad = quad  #direccion del cuadruplo
@@ -46,7 +54,8 @@ class FuncDirEntry:
             'name': self.name,
             'ret': self.ret,
             'varc': self.varc,
-            'params': self.params,
+            'paramcount': self.paramcount,
+            'params': json.dumps([json.loads(str(i)) for i in self.params]),
             'vart': self.vart,
             'addr': self.addr,
             'quad': self.quad,
