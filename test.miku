@@ -1,22 +1,13 @@
-[{"name": "MAIN", "ret": 0, "varc": [3, 0, 0], "params": 0, "vart": [4, 0, 1], "addr": 19, "var": [{"name": "y", "addr": 1500, "type": "var"}, {"name": "x", "addr": 1501, "type": "var"}, {"name": "z", "addr": 1502, "type": "var"}, {"name": 10.0, "addr": 4500, "type": "cte"}, {"name": 5.0, "addr": 4501, "type": "cte"}, {"name": "t1", "addr": 3000, "type": "temp"}, {"name": 9.0, "addr": 4502, "type": "cte"}, {"name": "t2", "addr": 3001, "type": "temp"}, {"name": "t3", "addr": 3002, "type": "temp"}, {"name": 1.0, "addr": 4503, "type": "cte"}, {"name": "t4", "addr": 3003, "type": "temp"}, {"name": "\"--\"", "addr": 5000, "type": "cte"}, {"name": 905.0, "addr": 4504, "type": "cte"}, {"name": "t5", "addr": 4000, "type": "temp"}, {"name": "\"wiiii\"", "addr": 5001, "type": "cte"}, {"name": "\"unu\"", "addr": 5002, "type": "cte"}]}]
-GOTO None None 1
-= 4500 None 1500
-= 4501 None 1501
-* 1500 4500 3000
-* 3000 4502 3001
-+ 1501 3001 3002
-+ 3002 4503 3003
-= 3003 None 1502
-write 5000 None None
-write 1502 None None
-write 5000 None None
-== 1502 4504 4000
-gotof 4000 None 17
-write 5001 None None
-write 5001 None None
-write 5001 None None
-goto 5 None 20
-write 5002 None None
-write 5002 None None
-write 5002 None None
-write 1501 None None
+[{"name": "suma", "ret": 2, "varc": [2, 1, 0], "params": 2, "vart": [2, 0, 0], "addr": 0, "quad": 1, "var": [{"name": "suma", "addr": 0, "type": "func"}, {"name": "a", "addr": 1500, "type": "var"}, {"name": "b", "addr": 1501, "type": "var"}, {"name": "c", "addr": 2000, "type": "var"}, {"name": "t1", "addr": 3000, "type": "temp"}]}, {"name": "MAIN", "ret": 0, "varc": [1, 0, 0], "params": 2, "vart": [2, 0, 0], "addr": 1, "quad": 4, "var": [{"name": "MAIN", "addr": 1, "type": "func"}, {"name": "x", "addr": 1500, "type": "var"}, {"name": 1.0, "addr": 4500, "type": "cte"}, {"name": 2.0, "addr": 4501, "type": "cte"}, {"name": "t2", "addr": 3000, "type": "temp"}]}]
+[2, 0, 0]
+goto None None 4
++ 1500 1501 3000
+= 3000 None 2000
+return 2000 None 0
+ERA None None 1
+PARAM 4500 None 1
+PARAM 4501 None 2
+GOSUB suma None 1
+= 0 None 3000
+= 3000 None 1500
+write 1500 None None

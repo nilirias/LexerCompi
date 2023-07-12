@@ -1,0 +1,12 @@
+[{"name": "suma", "ret": 2, "varc": [2, 1, 0], "params": 2, "vart": [2, 0, 0], "addr": 0, "quad": 3, "var": [{"name": "suma", "addr": 0, "type": "func"}, {"name": "a", "addr": 1500, "type": "var"}, {"name": "b", "addr": 1501, "type": "var"}, {"name": "c", "addr": 2000, "type": "var"}, {"name": "t1", "addr": 3000, "type": "temp"}]}, {"name": "MAIN", "ret": 0, "varc": [1, 0, 0], "params": 2, "vart": [2, 0, 0], "addr": 1, "quad": 10, "var": [{"name": "MAIN", "addr": 1, "type": "func"}, {"name": "x", "addr": 1500, "type": "var"}, {"name": 1.0, "addr": 4500, "type": "cte"}, {"name": 2.0, "addr": 4501, "type": "cte"}, {"name": "t2", "addr": 3000, "type": "temp"}]}]
+GOTO None None 1
++ 1500 1501 3000
+= 3000 None 2000
+return 2000 None 0
+ERA None None 1
+PARAM 4500 None 1
+PARAM 4501 None 2
+GOSUB suma None 3
+ 0 None 3000
+= 3000 None 1500
+write 1500 None None

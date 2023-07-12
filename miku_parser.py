@@ -8,6 +8,22 @@ from miku_cte import *
 from miku_semanticcube import checkOperator
 
 
+def addVarCte(self, varType, var):
+    # print('| addVarCte |')
+    if (not self.vardir.check_if_var_exists(var)):
+        if varType == "num":
+            self.dir = self.numcte
+            self.numcte = self.numcte + 1
+        if varType == "word":
+            self.dir = self.wordcte
+            self.wordcte = self.wordcte + 1
+        if varType == "bool":
+            self.dir = self.boolcte
+            self.boolcte = self.boolcte + 1
+        self.vardir.add_var(var, self.dir, 'cte')
+        self.ctedir.add_cte(var, self.dir)
+
+
 def checkVarType(varDir):
     if ((varDir >= 1500 and varDir < 2000)
             or (varDir >= 3000 and varDir < 3500)
@@ -26,21 +42,13 @@ def checkVarType(varDir):
         return 'bool'
 
 
-def generateOpCuadruple(self, op):
-    ro = self.operandos.pop()
-    lo = self.operandos.pop()
+def addTemporal(self, tipotemp):
+    # print(f'addTemporal {tipotemp}')
     self.temporal = self.temporal + 1
     temporal = f't{self.temporal}'
-    self.operandos.append(temporal)
     self.ctedir.add_cte(temporal, self.dir)
+    self.operandos.append(temporal)
 
-    loDir = self.vardir.get_var_address(lo)
-    roDir = self.vardir.get_var_address(ro)
-
-    lotype = checkVarType(loDir)
-    rotype = checkVarType(roDir)
-
-    tipotemp = checkOperator(rotype, lotype, op)
     if (tipotemp == 'number'):
         tempDir = self.numtemp
         self.vart[0] += 1
@@ -60,15 +68,53 @@ def generateOpCuadruple(self, op):
         self.vardir.add_var(temporal, tempDir, 'cte')
     else:
         self.vardir.add_var(temporal, tempDir, 'var')
+    return temporal, tempDir
 
+
+def generateOpCuadruple(self, op):
+    ro = self.operandos.pop()
+    lo = self.operandos.pop()
+
+    loDir = self.vardir.get_var_address(lo)
+    roDir = self.vardir.get_var_address(ro)
+
+    lotype = checkVarType(loDir)
+    rotype = checkVarType(roDir)
+
+    tipotemp = checkOperator(rotype, lotype, op)
+    temporal, tempDir = addTemporal(self, tipotemp)
+
+    # print(f'generateOpCuadruple: -----------------')
     # print(f'generateOpCuadruple: {lo} {op} {ro} : {temporal}')
     # print(f'generateOpCuadruple: {loDir} {op} {roDir} : {tempDir}')
+    # print(f'generateOpCuadruple: {self.operandos}')
+    # print(f'generateOpCuadruple: -----------------')
 
     myQuad = Quadruple(loDir, roDir, op, tempDir)
 
     self.quadruples.append(myQuad)
     self.quadcount = self.quadcount + 1
     # print(f'| generateOpCuadruple {self.quadcount} |')
+
+
+def addGlobalVar(self, varname, vartype):
+    if (vartype == 'number'):
+        self.dir = self.numglb
+        self.numglb += 1
+        self.varg[0] += 1
+
+    if (vartype == 'word'):
+        self.dir = self.wordglb
+        self.wordglb += 1
+        self.varg[1] += 1
+
+    if (vartype == 'bool'):
+        self.dir = self.boolglb
+        self.boolglb += 1
+        self.varg[2] += 1
+
+    self.vardir.add_var(varname, self.dir, 'func')
+    self.ctedir.add_cte(varname, self.dir)
 
 
 class MikuParser(Parser):
@@ -79,6 +125,8 @@ class MikuParser(Parser):
     varidd = ''
     funcid = ''
     functype = ''
+    funcaddr = 0
+    funcquad = 0
     vartype = ''
     operador = ''
 
@@ -97,10 +145,6 @@ class MikuParser(Parser):
 
     tipotemp = ''
 
-    myQuad = Quadruple(0, 0, 0, 0)
-    conQuad = Quadruple(0, 0, 0, 0)
-    paramaQuad = Quadruple(0, 0, 0, 0)
-
     operandos = []
     operadores = []
     returnquad = []
@@ -112,11 +156,8 @@ class MikuParser(Parser):
     pcont = 0
     dir = 0
 
-    contnum = 0
-    contword = 0
-    contbool = 0
-    varc = []
-
+    varg = [0, 0, 0]
+    varc = [0, 0, 0]
     vart = [0, 0, 0]
 
     numglb = 0
@@ -138,8 +179,10 @@ class MikuParser(Parser):
     # Grammar rules and actions
     @_('DRAWING ID fd1 \n declaration')
     def program(self, p):
-        self.myQuad = Quadruple(None, None, 'GOTO', 1)
-        self.quadruples.insert(0, self.myQuad)
+        print('\n\n|- program')
+        print(self.funcquad)
+        myQuad = Quadruple(None, None, 'goto', self.funcquad)
+        self.quadruples.insert(0, myQuad)
         self.quadcount = self.quadcount + 1
         # print(f'| program {self.quadcount} |')
         # print('==========================')
@@ -151,10 +194,11 @@ class MikuParser(Parser):
         # print('==========================')
         # print('- ctes')
         # print(self.ctedir)
-        return (p.ID, self.quadruples, self.funcdir, self.ctedir)
+        return (p.ID, self.quadruples, self.funcdir, self.varg)
 
     @_('var_declaration func_declaration main')
     def declaration(self, p):
+        # print('- declaration')
         return p[0]
 
     @_('var_type addvartype ID varglobal multiple_var vd1 \n var_declaration',
@@ -164,20 +208,7 @@ class MikuParser(Parser):
 
     @_('')
     def varglobal(self, p):
-        if (self.vartype == 'number'):
-            self.dir = self.numglb
-            self.numglb = self.numglb + 1
-
-        if (self.vartype == 'word'):
-            self.dir = self.wordglb
-            self.wordglb = self.wordglb + 1
-
-        if (self.vartype == 'bool'):
-            self.dir = self.boolglb
-            self.boolglb = self.boolglb + 1
-
-        self.vardir.add_var(p[-1], self.dir)
-        self.ctedir.add_cte(p[-1], self.dir)
+        addGlobalVar(self, p[-1], self.vartype)
 
     @_('')
     def addvartype(self, p):
@@ -195,28 +226,30 @@ class MikuParser(Parser):
         'FUNC resetvars func_type ftr ID fd1 OPEN_PTH parameter eracont CLOSE_PTH \n stmnt vd1 resettemp resetvarc END \n func_declaration',
         'empty')
     def func_declaration(self, p):
+        print(f'-- func_declaration {p[-1]}')
         return p[-1]
 
     @_('')
     def eracont(self, p):
         self.funcparamcont = self.funcparamcont + 1
+        # print(f'--- eracont {self.funcparamcont}')
 
     @_('')
     def resetvarc(self, p):
+        # print('--- resetvarc')
         self.funcdireccion.append(self.quadcount)
-        self.contnum = 0
-        self.contword = 0
-        self.contbool = 0
-        self.varc = [self.contnum, self.contword, self.contbool]
+        self.varc = [0, 0, 0]
 
     @_('')
     def resetvars(self, p):
+        # print('--- resetvars')
         self.numlcl = 1500
         self.wordlcl = 2000
         self.boollcl = 2500
 
     @_('')
     def resettemp(self, p):
+        # print('--- resettemp')
         self.funcjump = 0
         self.numtemp = 3000
         self.wordtemp = 3500
@@ -225,22 +258,41 @@ class MikuParser(Parser):
     # function id
     @_('')
     def fd1(self, p):
+        print('fd1', self.quadcount)
         self.funcid = p[-1]
+        self.funcquad = self.quadcount
+
+        if (self.functype == 2 or self.functype == 3 or self.functype == 4):
+            print('--fd1')
+
+            if (self.functype == 2):
+                type = 'number'
+            elif (self.functype == 3):
+                type = 'word'
+            elif (self.functype == 4):
+                type = 'bool'
+
+            addGlobalVar(self, self.funcid, type)
+            self.funcaddr = self.vardir.get_var_address(self.funcid)
 
     @_('')
     def vd1(self, p):
+        print(f'-------------------- vd1')
+        print(f'| {self.funcid} {self.quadcount} {self.funcquad}')
         self.funcdir.add_func(self.funcid, self.functype, self.varc,
-                              self.pcont, self.vart, self.quadcount - 1,
-                              self.vardir)
+                              self.pcont, self.vart, self.funcaddr,
+                              self.funcquad, self.vardir)
         self.vardir = VarDir()
         return p[-1]
 
     @_('VOID', 'NUMBER', 'WORD', 'BOOL')
     def func_type(self, p):
+        # print(f'--- func_type {p[-1]}')
         return p[-1]
 
     @_('')
     def ftr(self, p):
+        # print(f'--- ftr {p[-1]}')
         if (p[-1] == 'void'):
             self.functype = 1
         elif (p[-1] == 'number'):
@@ -255,6 +307,7 @@ class MikuParser(Parser):
 
     @_('var_type addvartype ID varid multiple_parameters', 'empty')
     def parameter(self, p):
+        # print(f'--- parameters')
         self.pcont = self.pcont + 1
         return p[0]
 
@@ -267,6 +320,7 @@ class MikuParser(Parser):
        'while_stmnt stmnt', 'move_func stmnt', 'pen_func stmnt',
        'returnf stmnt', 'empty')
     def stmnt(self, p):
+        # print('||| stmnt')
         # self.quadcount = self.quadcount + 1
         # self.jump.append(self.quadcount)
         # print(f'| stmnt {self.jump} - {self.quadcount} |')
@@ -274,6 +328,15 @@ class MikuParser(Parser):
 
     @_('RETURN expression')
     def returnf(self, p):
+        # print('returnf')
+        # print(f'returnf {self.operandos}')
+        # print(f'returnf {self.operadores}')
+        # print(f'returnf {self.funcdir}')
+        returnValue = self.operandos.pop()
+        returnDir = self.vardir.get_var_address(returnValue)
+        myQuad = Quadruple(returnDir, None, 'return', self.funcaddr)
+        self.quadruples.append(myQuad)
+        self.quadcount += 1
         return p[0]
 
     @_('var_type addvartype ID varid multiple_vars \n')
@@ -285,27 +348,19 @@ class MikuParser(Parser):
         if (self.vartype == 'number'):
             self.dir = self.numlcl
             self.numlcl = self.numlcl + 1
-            self.contnum = self.contnum + 1
-            self.varc = [self.contnum, self.contword, self.contbool]
+            self.varc[0] += 1
 
         if (self.vartype == 'word'):
             self.dir = self.wordlcl
             self.wordlcl = self.wordlcl + 1
-            self.contword = self.contword + 1
-            self.varc = [self.contnum, self.contword, self.contbool]
+            self.varc[1] += 1
 
         if (self.vartype == 'bool'):
             self.dir = self.boollcl
             self.boollcl = self.boollcl + 1
-            self.contbool = self.contbool + 1
-            self.varc = [self.contnum, self.contword, self.contbool]
+            self.varc[2] += 1
 
-        if (self.dir >= 3000 and self.dir <= 4499):
-            self.vardir.add_var(p[-1], self.dir, 'temp')
-        elif (self.dir >= 4500 and self.dir <= 5999):
-            self.vardir.add_var(p[-1], self.dir, 'cte')
-        else:
-            self.vardir.add_var(p[-1], self.dir, 'var')
+        self.vardir.add_var(p[-1], self.dir, 'var')
         self.ctedir.add_cte(p[-1], self.dir)
 
     @_('ID e5 assign e6 expression q3 \n')
@@ -314,10 +369,12 @@ class MikuParser(Parser):
 
     @_('')
     def e5(self, p):
+        # print(f'e5 {p[-1]}')
         self.operandos.append(p[-1])
 
     @_('')
     def e6(self, p):
+        # print(f'e6 {p[-1]}')
         self.operadores.append(p[-1])
 
     @_('ASSIGN')
@@ -327,8 +384,8 @@ class MikuParser(Parser):
     @_('variable getvardir', 'CTE_NUM nvarcte', 'CTE_STR svarcte',
        'cte_bool bvarcte', 'func_call')
     def var_cte(self, p):
-        # print(f'------- var_cte {p[1]}')
-        return p[1]
+        # print(f'|---- var_cte {p[-1]}')
+        return p[-1]
 
     @_('')
     def getvardir(self, p):
@@ -336,61 +393,31 @@ class MikuParser(Parser):
 
     @_('')
     def nvarcte(self, p):
-        if (not self.vardir.check_if_var_exists(p[-1])):
-            self.dir = self.numcte
-            self.numcte = self.numcte + 1
-            if (self.dir >= 3000 and self.dir <= 4499):
-                self.vardir.add_var(p[-1], self.dir, 'temp')
-            elif (self.dir >= 4500 and self.dir <= 5999):
-                self.vardir.add_var(p[-1], self.dir, 'cte')
-            else:
-                self.vardir.add_var(p[-1], self.dir, 'var')
-            self.ctedir.add_cte(p[-1], self.dir)
-
+        addVarCte(self, "num", p[-1])
         return p[-1]
-        # return self.vardir
 
     @_('')
     def svarcte(self, p):
-        if (not self.vardir.check_if_var_exists(p[-1])):
-            self.dir = self.wordcte
-            self.wordcte = self.wordcte + 1
-            if (self.dir >= 3000 and self.dir <= 4499):
-                self.vardir.add_var(p[-1], self.dir, 'temp')
-            elif (self.dir >= 4500 and self.dir <= 5999):
-                self.vardir.add_var(p[-1], self.dir, 'cte')
-            else:
-                self.vardir.add_var(p[-1], self.dir, 'var')
-            self.ctedir.add_cte(p[-1], self.dir)
+        addVarCte(self, "word", p[-1])
         return p[-1]
-        # return self.vardir
 
     @_('')
     def bvarcte(self, p):
-        self.dir = self.boolcte
-        self.boolcte = self.boolcte + 1
-        if (self.dir >= 3000 and self.dir <= 4499):
-            self.vardir.add_var(p[-1], self.dir, 'temp')
-        elif (self.dir >= 4500 and self.dir <= 5999):
-            self.vardir.add_var(p[-1], self.dir, 'cte')
-        else:
-            self.vardir.add_var(p[-1], self.dir, 'var')
-        self.ctedir.add_cte(p[-1], self.dir)
+        addVarCte(self, "bool", p[-1])
         return p[-1]
-        # return self.vardir
 
     @_('TRUE', 'FALSE')
     def cte_bool(self, p):
         return p[0]
 
-    @_('func_call q4 empty', 'expression rel_op exp q4 empty', 'exp q4 empty')
+    @_('expression rel_op exp q4 empty', 'exp q4 empty')
     def expression(self, p):
-        # print('--- expression')
+        # print('| expression')
         return p[0]
 
     @_('')
     def q4(self, p):
-        # print(f'---- q4 {self.operadores}')
+        # print(f'|- q4 {self.operadores}')
         while len(self.operadores) > 0:
             op = self.operadores.pop()
             if (op == '>' or op == '<' or op == '<=' or op == '>='
@@ -402,7 +429,7 @@ class MikuParser(Parser):
 
     @_('exp term_op e3 termino q1', 'termino q1')
     def exp(self, p):
-        # print('---- exp')
+        # print('|- exp')
         return p[0]
 
     #Punto neuralgico para exp
@@ -414,7 +441,7 @@ class MikuParser(Parser):
     #quads suma resta
     @_('')
     def q2(self, p):
-        # print(f'------ q2 {self.operadores}')
+        # print(f'|--- q2 {self.operadores}')
         while len(self.operadores) > 0:
             op = self.operadores.pop()
             if (op == '*' or op == '/'):
@@ -430,14 +457,13 @@ class MikuParser(Parser):
 
     @_('termino fact_op e2 factor q2', 'factor q2')
     def termino(self, p):
-        # print('----- termino')
+        # print('|-- termino')
         return p[0]
 
-#quads mult div
-
+    #quads mult div
     @_('')
     def q1(self, p):
-        # print(f'----- q1 {self.operadores}')
+        # print(f'|-- q1 {self.operadores}')
         if (len(self.operadores) > 0):
             op = self.operadores.pop()
             if (op == '+' or op == '-'):
@@ -447,17 +473,19 @@ class MikuParser(Parser):
 
     @_('')
     def q3(self, p):
+        # print(f'q3 {self.operandos} {self.funcdir}')
         if (len(self.operadores) > 0):
             op = self.operadores.pop()
             if (op == '='):
                 lo = self.operandos.pop()
                 temp = self.operandos.pop()
+                # print(f'| q3 {lo} {temp}')
                 loDir = self.vardir.get_var_address(lo)
                 tempDir = self.vardir.get_var_address(temp)
                 myQuad = Quadruple(loDir, None, op, tempDir)
                 self.quadruples.append(myQuad)
                 self.quadcount = self.quadcount + 1
-                print(f'| q3 {self.quadcount} |')
+                # print(f'| q3 {self.quadcount} |')
             else:
                 self.operadores.append(op)
 
@@ -474,7 +502,7 @@ class MikuParser(Parser):
 
     @_('open_pth expression close_pth', 'var_cte e1')
     def factor(self, p):
-        # print('------ factor')
+        # print('|--- factor')
         return p[0]
 
     #Punto neuralgico para todos los operandos
@@ -495,7 +523,7 @@ class MikuParser(Parser):
     @_('CLOSE_PTH')
     def close_pth(self, p):
         if (p[0] == ')'):
-            (f'closepath {self.operadores.pop()}')
+            self.operadores.pop()
             return None
 
     @_('AND', 'OR')
@@ -511,6 +539,7 @@ class MikuParser(Parser):
 
     @_('ID func1 OPEN_PTH func_call_param CLOSE_PTH func3 \n')
     def func_call(self, p):
+        # print(f'func_call {p.ID} {p[-1]}')
         self.id = p.ID
         return p[-1]
 
@@ -518,36 +547,56 @@ class MikuParser(Parser):
     @_('')
     def func1(self, p):
         self.id = p[-1]
-        self.myQuad = Quadruple(None, None, 'ERA',
-                                self.funcparamcont)  #ERA | | | SIZE
-        self.quadruples.append(self.myQuad)
+        myQuad = Quadruple(None, None, 'ERA',
+                           self.funcparamcont)  #ERA | | | SIZE
+        self.quadruples.append(myQuad)
         self.quadcount = self.quadcount + 1
-        print(f'func1 {self.quadcount}')
+        # print(f'- func1 {self.quadcount}')
 
     @_('expression func2 multiple_fc_param')
     def func_call_param(self, p):
+        # print(f'- func_call_param')
         return p[0]
 
     @_('')
     def func2(self, p):
+        # print(f'-- func2 {self.operandos}')
         self.paramCont = self.paramCont + 1
         param = self.operandos.pop()
         paramdir = self.vardir.get_var_address(param)
-        self.paramQuad = Quadruple(paramdir, None, 'PARAM',
-                                   self.paramCont)  # PARAM | ADDR | | #PARAM
-        self.quadruples.append(self.paramQuad)
+        paramQuad = Quadruple(paramdir, None, 'PARAM',
+                              self.paramCont)  # PARAM | ADDR | | #PARAM
+        self.quadruples.append(paramQuad)
         self.quadcount = self.quadcount + 1
 
     @_('')
     def func3(self, p):
-        self.myQuad = Quadruple(self.id, None, 'GOSUB',
-                                self.funcdir.get_func_addr(
-                                    self.id))  #GOSUB | NAME | | INIT ADDR
-        self.quadruples.append(self.myQuad)
-        self.quadcount = self.quadcount + 1
+        # print('- func3')
+        myQuad = Quadruple(self.id, None, 'GOSUB',
+                           self.funcdir.get_func_quad(
+                               self.id))  #GOSUB | NAME | | INIT ADDR
+        self.quadruples.append(myQuad)
+        self.quadcount += 1
+        # print(self.funcdir.get_func_type(self.id))
+        functype = self.funcdir.get_func_type(self.id)
+        if (functype == 2 or functype == 3 or functype == 4):
+            if (functype == 2):
+                type = 'number'
+            elif (functype == 3):
+                type = 'word'
+            elif (functype == 4):
+                type = 'bool'
+            temp, tempDir = addTemporal(self, type)
+            # print(f'- func3 {temp} {self.vardir}')
+            # tempDir = self.vardir.get_var_address(temp)
+            myQuad = Quadruple(self.funcdir.get_func_addr(self.id), None, '=',
+                               tempDir)
+            self.quadruples.append(myQuad)
+            self.quadcount += 1
 
     @_('COMMA func_call_param', 'empty')
     def multiple_fc_param(self, p):
+        # print('-- multiple_fc_param')
         return p[0]
 
     @_('READ OPEN_PTH variable multiple_vars CLOSE_PTH \n')
@@ -556,6 +605,7 @@ class MikuParser(Parser):
 
     @_('ID array')
     def variable(self, p):
+        # print('|----- variable')
         return p[0]
 
     @_('OPEN_SQR expression CLOSE_SQR matrix', 'empty')
@@ -578,11 +628,10 @@ class MikuParser(Parser):
     def wr2(self, p):
         lo = self.operandos.pop()
         loDir = self.vardir.get_var_address(lo)
-        self.myQuad = Quadruple(loDir, None, 'write', None)
+        myQuad = Quadruple(loDir, None, 'write', None)
         self.quadcount = self.quadcount + 1
-        self.quadruples.append(self.myQuad)
-        print(f'| wr2 {self.quadcount} |')
-        #print(self.myQuad)
+        self.quadruples.append(myQuad)
+        # print(f'| wr2 {myQuad} |')
 
     @_('IF con_expression if1 \n stmnt if2 else_stmnt')
     def if_stmnt(self, p):
@@ -592,22 +641,21 @@ class MikuParser(Parser):
     @_('')
     def if1(self, p):
         # self.gotofdir = self.quadcount
-        self.conQuad = Quadruple(None, None, 'gotof', None)
+        conQuad = Quadruple(None, None, 'gotof', None)
         self.returnquad.append(len(self.quadruples))
         self.quadcount = self.quadcount + 1
-        self.quadruples.append(self.conQuad)
-        print(f'-- if1 {self.quadcount}')
+        self.quadruples.append(conQuad)
+        # print(f'-- if1 {self.quadcount}')
 
     @_('')
     def if2(self, p):
         # print('-- if2')
-        # self.operandos.append(self.temporal)
-        valor = self.vardir.get_var_address(f't{self.temporal}')
-        print(f'| if2... {valor} {self.jump} {self.quadcount} |')
-        self.conQuad = Quadruple(valor, None, 'gotof', self.quadcount + 1)
-        # self.quadcount = self.quadcount + 1
+        valor = self.operandos.pop()
+        varDir = self.vardir.get_var_address(valor)
+        # print(f'| if2... {valor} {self.jump} {self.quadcount} |')
+        conQuad = Quadruple(varDir, None, 'gotof', self.quadcount + 1)
         idx = self.returnquad.pop()
-        self.quadruples[idx] = self.conQuad
+        self.quadruples[idx] = conQuad
 
     @_('\n ELSE if3 \n stmnt if4 END \n', '\n END \n')
     def else_stmnt(self, p):
@@ -616,22 +664,19 @@ class MikuParser(Parser):
 
     @_('')
     def if3(self, p):
-        print('--- if3')
-        self.conQuad = Quadruple(None, None, 'goto', None)
+        # print('--- if3')
+        conQuad = Quadruple(None, None, 'goto', None)
         # self.quadcount = self.quadcount + 1
         self.returnquad.append(len(self.quadruples))
-        self.quadruples.append(self.conQuad)
+        self.quadruples.append(conQuad)
 
     @_('')
     def if4(self, p):
-        print(f'--- if4 {self.quadcount}')
-        # self.jump.append(self.quadcount)
-        print(f'--- if4 {self.jump}')
-        self.operandos.append(self.temporal)
-        self.conQuad = Quadruple(self.operandos.pop(), None, 'goto',
-                                 self.quadcount + 1)
+        # print(f'--- if4 {self.operandos}')
+        conQuad = Quadruple(None, None, 'goto', self.quadcount + 1)
         idx = self.returnquad.pop()
-        self.quadruples[idx] = self.conQuad
+        self.quadruples[idx] = conQuad
+        self.quadcount += 1
 
     @_('WHILE w1 con_expression w2 \n stmnt \n w3 END \n')
     def while_stmnt(self, p):
@@ -640,27 +685,27 @@ class MikuParser(Parser):
     @_('')
     def w1(self, p):
         self.jump.append(self.quadcount)
-        print(f'| w1 {self.jump} |')
+        # print(f'| w1 {self.jump} |')
 
     @_('')
     def w2(self, p):
-        self.myQuad = Quadruple(self.operandos.pop(), None, 'gotof', None)
+        operando = self.operandos.pop()
+        operandoDir = self.vardir.get_var_address(operando)
+        myQuad = Quadruple(operandoDir, None, 'gotof', None)
         self.returnquad.append(len(self.quadruples))
-        self.quadruples.append(self.myQuad)
-        self.jump.append(self.quadcount - 1)
-        print(f'| w2 {self.jump} |')
+        self.quadruples.append(myQuad)
+        self.quadcount += 1
+        # print(f'| w2 {self.jump} |')
 
     @_('')
     def w3(self, p):
-        self.jump.append(self.quadcount - 1)
-        print(f'| w3 {self.jump} |')
-        self.operandos.append(self.temporal)
-        self.conQuad = Quadruple(self.operandos.pop(), None, 'gotof',
-                                 self.jump.pop())
+        self.quadcount += 1
+        self.jump.append(self.quadcount)
+        # print(f'| w3 {self.jump} {self.operandos} |')
         idx = self.returnquad.pop()
-        self.quadruples[idx] = self.conQuad
-        self.conQuad = Quadruple(None, None, 'gotot', self.jump.pop())
-        self.quadruples.append(self.conQuad)
+        self.quadruples[idx].res = self.jump.pop()
+        conQuad = Quadruple(None, None, 'goto', self.jump.pop())
+        self.quadruples.append(conQuad)
 
     @_('expression log_op e7 expression q5', 'expression q5')
     def con_expression(self, p):
@@ -695,28 +740,10 @@ class MikuParser(Parser):
     def pen_func(self, p):
         return p[0]
 
-    @_('MAIN fd1 ftr resetvars \n sq1 stmnt vd1 END')
+    @_('MAIN fd1 ftr resetvars \n stmnt vd1 END')
     def main(self, p):
         return p[0]
 
     @_('')
-    def sq1(self, p):
-        # self.quadcount = self.quadcount + 1
-        # self.jump.append(self.quadcount)
-        print(f'| sq1 {self.jump} {self.quadcount}|')
-
-    @_('')
     def empty(self, p):
         pass
-
-
-# if __name__ == '__main__':
-#     lexer = MikuLexer()
-#     parser = MikuParser()
-#     filename = 'test.txt'
-
-#     with open(filename) as fp:
-#         try:
-#             result = parser.parse(lexer.tokenize(fp.read()))
-#         except EOFError:
-#             pass

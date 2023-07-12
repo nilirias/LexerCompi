@@ -5,7 +5,7 @@ MAIN
   number z
   y = 10
   x = 5
-  z = x + y * 10 * 9 + 1
+  z = x + y * 10 * 9
 
   write("--")
   write(z)
@@ -20,6 +20,9 @@ MAIN
     write("unu")
     write("unu")
   end
+  
+  write(x)
 
   write(x)
+
 END

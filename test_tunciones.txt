@@ -1,0 +1,16 @@
+DRAWING test
+
+func number suma(number a, number b)
+  word c
+  c = a + b
+  return c
+end
+
+
+MAIN
+  number x
+   x = suma(1, 2)
+
+   write(x)
+
+END

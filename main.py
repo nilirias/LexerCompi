@@ -7,7 +7,7 @@ from read import run_vm
 if __name__ == '__main__':
     lexer = MikuLexer()
     parser = MikuParser()
-    filename = 'test_suma_variables.txt'
+    filename = 'test_tunciones.txt'
     print(f'Compilando Miku - {filename}')
     success = False
 
@@ -16,15 +16,17 @@ if __name__ == '__main__':
 
     with open(filename) as fp:
         try:
-            program_name, quads, funcdir, ctedir = parser.parse(lexer.tokenize(fp.read()))
+            program_name, quads, funcdir, varg = parser.parse(
+                lexer.tokenize(fp.read()))
             outfile = open(program_name + '.miku', 'w')
 
             outfile.write(str(funcdir) + '\n')
+            outfile.write(str(varg) + '\n')
 
             for quad in quads:
                 #print(str(quad))
                 outfile.write(str(quad) + '\n')
-            #print('Code compiled successfully to', program_name + '.miku')
+            print('Code compiled successfully to', program_name + '.miku')
             success = True
         except EOFError:
             pass

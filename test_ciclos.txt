@@ -1,0 +1,13 @@
+DRAWING test
+MAIN
+  number x
+  number z
+
+  x = 0
+  while x < 10
+    x = x + 1
+  END
+
+  write(x)
+
+END
